@@ -139,10 +139,18 @@ model is saved in your data folder, so a rerun asks and pays for nothing twice.
 - Python 3.12 and [uv](https://docs.astral.sh/uv/).
 - A [Hugging Face](https://huggingface.co) account with a token that may call
   [Inference Providers](https://huggingface.co/docs/inference-providers), run
-  [Jobs](https://huggingface.co/docs/huggingface_hub/guides/jobs) and write datasets. Jobs need a paid plan or
-  credits.
-- About 15 GB of free disk for the data folder, plus the Hugging Face cache for one embedding model.
+  [Jobs](https://huggingface.co/docs/huggingface_hub/guides/jobs), and create and write datasets. The LLM calls
+  cost more than the free monthly credit, and Jobs need a paid plan or credits, so set up billing first.
+- Access to three gated models that two of the LLM methods use: request it on the pages of
+  [gemma-3-12b-it](https://huggingface.co/google/gemma-3-12b-it),
+  [gemma-3-27b-it](https://huggingface.co/google/gemma-3-27b-it) and
+  [Llama-3.1-8B-Instruct](https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct). Their owners approve
+  requests by hand.
+- About 15 GB of free disk. A full run leaves about 13 GB in the data folder, and the Hugging Face cache keeps a
+  second copy of the 2.9 GB download and the BGE-M3 embedding model.
 - An Apple-silicon Mac or a machine with a GPU makes the local training faster; a plain CPU works, more slowly.
+- A machine that can stay awake for a day or more: the GPU jobs take about four hours and notebook 17 about a
+  day.
 
 ### What it costs
 
@@ -152,33 +160,42 @@ At November 2026 prices, as our run recorded them:
 |---|---|---|
 | LLM calls (open models through Hugging Face Inference Providers) | about $100, two thirds of it notebook 17 | about a day, mostly notebook 17 |
 | 19 GPU fine-tuning runs on Hugging Face Jobs, run side by side | about $37 | about four hours |
-| Local models and embeddings | free | a few hours |
+| Local models, and embedding every document | free | a few hours |
 
-`uv run python scripts/gpu_jobs.py --dry-run` lists the GPU runs still to do and the most each could cost.
-To spend less, run the first notebooks only (`scripts/run_pipeline.sh 01 02 03 04 05 06 07`, about $13 of LLM
-calls and no GPU), or swap in cheaper models in [configs/experiment.yaml](configs/experiment.yaml).
+Some LLM methods also embed their queries through Hugging Face's hosted service, which bills the same account as
+the LLM calls. `uv run python scripts/gpu_jobs.py --dry-run` lists the GPU runs still to do and the most each
+could cost, set by its time limit. Notebooks 10, 15 and 17 stop before their LLM calls pass $5, $12 and $80, set
+in each notebook's first code cell; if prices have risen, raise the limit there and run again.
+
+To spend less, run the first notebooks only: `scripts/run_pipeline.sh 01 02 03 04 05 06 07` downloads the data,
+embeds it and runs those notebooks, for about $13 of LLM calls and no GPU. Or swap in cheaper models in
+[configs/experiment.yaml](configs/experiment.yaml).
 
 ### Steps
 
 ```bash
+git switch -c my-run                  # the run rewrites outputs/, the notebooks and README.md
 uv sync
 cp .env.example .env                  # set TAXONOMY_DATA_ROOT and TAXONOMY_JOBS_DATASET
-hf auth login                         # or set HF_TOKEN; the token is never written to this repository
+mkdir -p /path/to/taxonomy_test_sets  # the data folder named in .env must exist
+uv run hf auth login                  # or set HF_TOKEN; the token is never written to this repository
 uv run python scripts/check_setup.py  # the data folder, disk space, the login and the jobs dataset
 scripts/run_pipeline.sh               # everything, in order
 ```
 
 `scripts/run_pipeline.sh` stops at the first failure, and runs again from where it stopped. In order, it:
 
-1. downloads the test sets (`scripts/download_data.py`);
+1. checks the setup and downloads the test sets, checking each file (`scripts/check_setup.py`,
+   `scripts/download_data.py`);
 2. runs notebook 01, which reads them and downloads EuroVoc's tree;
 3. embeds every document on your machine with BGE-M3 (`scripts/embed_corpus.py`);
 4. runs notebooks 02 to 07, the LLM methods on samples of both test sets;
 5. trains the local models (`scripts/train_local_models.py`);
-6. launches the 19 GPU runs on Hugging Face Jobs, waits for them and records which commit of your jobs dataset
-   holds their outputs (`scripts/gpu_jobs.py`);
+6. uploads the reranker's inputs to your jobs dataset, launches the 19 GPU runs on Hugging Face Jobs, waits for
+   them and records which commit of the dataset holds their outputs (`scripts/gpu_jobs.py`);
 7. runs notebooks 08 to 17: the trained models, the combined method, the published benchmarks and HumSet 2.0.0;
-8. builds the report (`scripts/make_report.py`).
+8. exports the label browser and builds the report, which also rewrites the results section of this README
+   (`scripts/export_label_browser.py`, `scripts/make_report.py`).
 
 To rerun one notebook, name it: `scripts/run_pipeline.sh 10`.
 
@@ -195,10 +212,13 @@ Close, not identical. The test sets and GPU recipes are pinned, but three things
 - **LLM providers** may answer differently from one month to the next.
 - **EuroVoc's tree** is downloaded live from the EU, so it may have changed.
 
-Given the same trained models and saved replies, everything else is repeatable: replayed from our saved replies,
-the pipeline rebuilds our report exactly. The report's findings are written for our results, so
-`scripts/make_report.py` stops and names any finding your run no longer supports. `git diff outputs/results`
-shows how your numbers differ from ours.
+Given the same trained models and saved replies, everything else is repeatable: we checked that, replayed from
+our own saved replies, which are not published, the pipeline rebuilds our report exactly.
+
+The report's findings are written for our results, so `scripts/make_report.py` stops and names any finding your
+run no longer supports, and then builds no report. Your results are still all there:
+`git diff outputs/results` shows how your numbers differ from ours, and each notebook shows its own. Notebook 01
+also stops if today's EuroVoc tree reproduces fewer than 95% of the dataset's top-level labels.
 
 ## Swapping models
 

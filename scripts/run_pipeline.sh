@@ -6,7 +6,9 @@
 #   scripts/run_pipeline.sh 08 09      # only the notebooks whose names start with these numbers
 #
 # Every model reply, embedding and finished training step is saved in the data folder, so a rerun skips what is
-# done and pays for nothing twice. Each notebook is executed in place, so its outputs are kept, then trimmed.
+# done and pays for nothing twice. The setup check, the download and the embedding always run, because every
+# notebook needs them; each skips what is already there. Each notebook is executed in place, so its outputs are
+# kept, then trimmed.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -32,13 +34,11 @@ run_notebook() {
   uv run python scripts/trim_notebook.py "notebooks/$1.ipynb"
 }
 
-if [ "$#" -eq 0 ]; then
-  uv run python scripts/check_setup.py
-  uv run python scripts/download_data.py
-fi
-wanted 01_test_sets "$@" && run_notebook 01_test_sets
+uv run python scripts/check_setup.py
+uv run python scripts/download_data.py
+if wanted 01_test_sets "$@"; then run_notebook 01_test_sets; fi
 # MultiEURLEX is readable once notebook 01 has converted it.
-[ "$#" -eq 0 ] && uv run python scripts/embed_corpus.py
+uv run python scripts/embed_corpus.py
 for notebook in "${BEFORE_GPU[@]}"; do
   if wanted "$notebook" "$@"; then run_notebook "$notebook"; fi
 done

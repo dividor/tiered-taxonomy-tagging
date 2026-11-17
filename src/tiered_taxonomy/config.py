@@ -22,7 +22,9 @@ def data_root() -> Path:
         raise RuntimeError("TAXONOMY_DATA_ROOT is not set; copy .env.example to .env and fill it in")
     path = Path(value)
     if not path.is_dir():
-        raise FileNotFoundError(f"data folder not found: {path}")
+        raise FileNotFoundError(
+            f"data folder not found: {path}; create it first, for example: mkdir -p {path}"
+        )
     return path
 
 

@@ -11,7 +11,7 @@ from tiered_taxonomy import gpu_jobs as gj
 from tiered_taxonomy.config import data_root
 from tiered_taxonomy.models import hf_token
 
-# A full run leaves about 12 GB in the data folder; keep some room beyond that.
+# A full run leaves about 13 GB in the data folder; keep some room beyond that.
 NEEDED_GB = 15
 
 
