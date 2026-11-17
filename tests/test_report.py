@@ -83,10 +83,19 @@ def test_near_miss_paths_needs_two_labels_under_one_parent() -> None:
 
 def test_near_miss_panel_names_the_tier_of_every_label(inputs: rp.Inputs) -> None:
     page = build_page(REPO)
-    panel = page[page.index("<figure class=nearmiss>") : page.index("</figure>", page.index("nearmiss"))]
+    panel = " ".join(
+        page[page.index("<figure class=nearmiss>") : page.index("</figure>", page.index("nearmiss"))].split()
+    )
     assert re.findall(r"<span class=t>([^<]+)</span>", panel) == ["Tier 1", "Tier 2", "Tier 3", "Tier 4"]
     assert "the tier 4 label <q>labelling</q>" in panel
     assert "Exact label" not in panel
+    assert "It is not quite a tree: 244 labels have more than one parent." in panel
+    assert "through every parent" in panel
+    assert (
+        "our copy of EuroVoc has 7,372 labels, only 693 of them in tiers 1 to 3; "
+        "the MultiEURLEX paper counts 7,390" in panel
+    )
+    assert "ours match them for 99.4% of test laws at tier 1, 84.8%" in " ".join(page.split())
 
 
 def test_every_subtitle_starts_with_a_capital(inputs: rp.Inputs) -> None:
@@ -200,6 +209,12 @@ def test_tier_mix_explains_the_gap_and_raises_when_it_no_longer_holds(inputs: rp
     raised = [replace(laws[0], scores={**laws[0].scores, "exact": {"f1": 0.99}}), *laws[1:]]
     with pytest.raises(ValueError, match="not below every tier"):
         rp.tier_mix(inputs, raised, excerpts)
+    like = dict(inputs.results["14_like_for_like"])
+    gold = like["eurlex"]["gold"]
+    like["eurlex"] = {**like["eurlex"], "gold": {**gold, "by_tier": {**gold["by_tier"], "2": 1}}}
+    grouped = rp.Inputs({**inputs.results, "14_like_for_like": like}, inputs.config, inputs.methods)
+    with pytest.raises(ValueError, match="labels at tier"):
+        rp.tier_mix(grouped, laws, excerpts)
 
 
 def test_the_humanitarian_combined_row_says_what_it_weighs(inputs: rp.Inputs) -> None:

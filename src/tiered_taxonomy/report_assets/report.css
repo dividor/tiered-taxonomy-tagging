@@ -199,6 +199,7 @@ dl.tiles dd { margin: 0; font-size: 14px; font-weight: 600; line-height: 1.3; }
 /* The near-miss example: a taxonomy path read left to right, the leaf where exact credit is lost. */
 .nearmiss { margin: 0; background: var(--panel); box-shadow: var(--shadow); padding: 20px 22px; display: grid; gap: 14px; }
 .nearmiss h3 { margin: 0 0 4px; font-size: 16px; }
+.nearmiss figcaption { display: grid; gap: 8px; }
 .nearmiss p, .nearmiss li { font-size: 14px; max-width: 76ch; }
 .nearmiss ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
 ol.path { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }

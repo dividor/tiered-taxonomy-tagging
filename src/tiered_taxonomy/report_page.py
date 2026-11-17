@@ -7,6 +7,7 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
+from tiered_taxonomy import benchmarks as bm
 from tiered_taxonomy import report_browser as rb
 from tiered_taxonomy.report import (
     ASSETS,
@@ -329,10 +330,15 @@ def header(inputs: Inputs, laws: Sequence[Row], excerpts: Sequence[Row]) -> str:
 
 
 def near_miss(
-    mix: TierMix, tree: Mapping[str, Any], person: str = "labelling", method: str = "packaging"
+    mix: TierMix,
+    tree: Mapping[str, Any],
+    paper: str,
+    person: str = "labelling",
+    method: str = "packaging",
 ) -> str:
     """Return a worked example of a near miss, and where the assigned labels sit, to explain why the exact
-    score is lower than the tier scores. The example's path is read from EuroVoc's tree in `tree`."""
+    score is lower than the tier scores. The example's path is read from EuroVoc's tree in `tree`, and `paper`
+    is the citation of the MultiEURLEX paper."""
     path = near_miss_paths(tree, person, method)
     *above, (tier, _) = path
     parent = above[-1][1]
@@ -344,8 +350,11 @@ def near_miss(
     shared = ", ".join(str(t) for t, _ in above[:-1]) + f" and {above[-1][0]}"
     return f"""<figure class=nearmiss>
     <figcaption><h3>Why the exact score is lower than the tier scores</h3>
-    <p>Every box below is a EuroVoc label; EuroVoc arranges its labels in a tree of {len(tree["tiers"])}
-    tiers. Say a person gave a law the tier {tier} label <q>{esc(person)}</q>, and a method chose
+    <p>Every box below is a label in our copy of EuroVoc, which arranges its labels in {mix.law_tiers}
+    tiers. It is not quite a tree: {mix.law_several_parents:,} labels have more than one parent. Tiers 1
+    and 2 only group the labels below them. Laws are tagged from tier 3 down {paper}, and none of these test
+    laws has a tier 1 or 2 label.</p>
+    <p>Say a person gave a law the tier {tier} label <q>{esc(person)}</q>, and a method chose
     <q>{esc(method)}</q>, another tier {tier} label. Both sit under the same tier {tier - 1} label,
     <q>{esc(parent)}</q>.</p>
     </figcaption>
@@ -353,12 +362,14 @@ def near_miss(
       <span class=who>{esc(person)} <small>person</small></span>
       <span class=who>{esc(method)} <small>method</small></span></span>
       <span class=no>no match</span></li></ol>
-    <p>A tier score replaces each label with the label above it at that tier, then compares those. At tiers
-    {shared} both labels become the same label, so this near miss counts as correct. The exact score
-    compares the labels themselves, at whatever tier they sit, here tier {tier}, so it scores nothing.</p>
+    <p>A tier score replaces each label with the label or labels above it at that tier, through every parent,
+    then compares those. At tiers {shared} both labels become the same label, so this near miss counts as
+    correct. The exact score compares the labels themselves, at whatever tier they sit, here tier {tier}, so
+    it scores nothing.</p>
     <ul>
-      <li><strong>EU laws:</strong> EuroVoc has {mix.law_nodes:,} labels, only
-      {mix.law_top_three:,} of them in tiers 1 to 3. Of the labels people assigned to these test laws,
+      <li><strong>EU laws:</strong> our copy of EuroVoc has {mix.law_nodes:,} labels, only
+      {mix.law_top_three:,} of them in tiers 1 to 3; the MultiEURLEX paper counts {bm.MULTI_EURLEX_LABELS:,}
+      in its version. Of the labels people assigned to these test laws,
       {mix.law_below_three:.0%} sit deeper than tier 3, so every method's exact score is below all three of
       its tier scores.</li>
       <li><strong>Humanitarian excerpts:</strong> the taxonomy has only two tiers, and
@@ -442,7 +453,7 @@ def results(
     </dl></div>
     <div><h3>Kinds of method</h3><dl>{kinds}</dl></div>
   </div>
-  {near_miss(mix, inputs.results["label_browser"]["eurlex"]["tree"])}
+  {near_miss(mix, inputs.results["label_browser"]["eurlex"]["tree"], c["multieurlex"])}
   <h3>EU laws (MultiEURLEX): 600 test laws, EuroVoc's top three tiers</h3>
   {rb.data_links("eurlex", inputs.results["label_browser"])}
   <p class=note>The laws are split by date, so the test laws are newer than the training laws. Rows marked
@@ -452,6 +463,11 @@ def results(
   test laws. The published BERT benchmark {c["multieurlex"]} used training laws only. A rare label here was
   given to at most
   {cutoff:,} of the training laws.</p>
+  <p class=note>Tiers 1 to 3 here come from moving each label up our copy of EuroVoc, which is newer than the
+  dataset (notebook 01). MultiEURLEX publishes its own labels for its levels 1 to 3 {c["multieurlex"]}, and
+  ours match them for {mix.level_agreement[0]:.1%} of test laws at tier 1, {mix.level_agreement[1]:.1%} at
+  tier 2 and {mix.level_agreement[2]:.1%} at tier 3. So these tier scores cannot be set beside the paper's
+  results by level.</p>
   {laws_table}
   {v2_section(v2, v2_test, v2_table + v2_leads(v2_rows), c["humbert"], inputs.results["label_browser"])}
   {first_version_line(inputs, v1_rows)}

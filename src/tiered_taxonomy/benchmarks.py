@@ -34,6 +34,8 @@ HUMSET_PAPER_XLM_R = {
 }
 # Mean R-Precision, English, chronological split (arXiv 2109.00904, tables 4 and 5).
 MULTI_EURLEX_BERT = {"all": 48.4, "level_3": 67.7}
+# The number of original EuroVoc labels in MultiEURLEX (arXiv 2109.00904, table 2).
+MULTI_EURLEX_LABELS = 7390
 HUMSET_PILLARS_1D = frozenset(
     {
         "Casualties",

@@ -583,6 +583,9 @@ class TierMix:
     excerpt_tier_one: float
     excerpts_between: int
     excerpt_rows: int
+    law_tiers: int
+    law_several_parents: int
+    level_agreement: tuple[float, float, float]
 
 
 def label_path(tree: Mapping[str, Any], name: str) -> list[tuple[int, str]]:
@@ -632,7 +635,11 @@ def tier_mix(inputs: Inputs, laws: Sequence[Row], excerpts: Sequence[Row]) -> Ti
     between = sum(r.tier("2") < r.f1 < r.tier("1") for r in excerpts)
     if 2 * between <= len(excerpts):
         raise ValueError("findings no longer hold: most excerpt methods' exact score is not between tiers")
+    grouping = [t for t in law_gold["by_tier"] if int(t) < 3]
+    if grouping:
+        raise ValueError(f"findings no longer hold: test laws have labels at tier {grouping}")
     below = sum(n for t, n in law_gold["by_tier"].items() if int(t) > 3)
+    agreement = inputs.results["01_test_sets"]["eurovoc_agreement"]
     return TierMix(
         law_nodes=sizes["eurlex"]["nodes"],
         law_top_three=sum(sizes["eurlex"]["tier sizes"][t] for t in ("1", "2", "3")),
@@ -640,6 +647,9 @@ def tier_mix(inputs: Inputs, laws: Sequence[Row], excerpts: Sequence[Row]) -> Ti
         excerpt_tier_one=excerpt_gold["by_tier"]["1"] / excerpt_gold["labels"],
         excerpts_between=between,
         excerpt_rows=len(excerpts),
+        law_tiers=len(sizes["eurlex"]["tier sizes"]),
+        law_several_parents=sizes["eurlex"]["nodes with 2+ parents"],
+        level_agreement=tuple(agreement[f"level_{tier}"] for tier in (1, 2, 3)),
     )
 
 

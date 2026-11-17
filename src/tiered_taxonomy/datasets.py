@@ -142,7 +142,8 @@ def load_eurlex_rows(root: Path, split: str) -> pd.DataFrame:
 
 
 def eurlex_items(rows: pd.DataFrame, language: str = "en") -> list[Item]:
-    """Turn MultiEURLEX rows into items. Gold labels by tier are the dataset's own level labels."""
+    """Turn MultiEURLEX rows into items, with the dataset's own level labels by tier. `experiment.load_eurlex`
+    replaces those with labels rolled up through the EuroVoc tree, which the scores use."""
     items = []
     for row in rows.to_dict("records"):
         by_tier = {tier: frozenset(str(label) for label in row[name]) for tier, name in EURLEX_LEVELS.items()}
