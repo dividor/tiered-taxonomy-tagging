@@ -7,9 +7,12 @@ permissions:
   pull-requests: write
 
 jobs:
+  # `gh pr merge --auto` waits for checks only if main's branch protection requires them; without that rule it
+  # merges at once. So this runs only on the public repository, where main requires the CI jobs to pass (set in
+  # Settings > Branches when the repository is made public). Until then Dependabot's pull requests wait for a person.
   auto-merge:
     runs-on: ubuntu-latest
-    if: github.actor == 'dependabot[bot]'
+    if: github.actor == 'dependabot[bot]' && github.event.repository.visibility == 'public'
     steps:
       - name: Fetch Dependabot metadata
         id: metadata
