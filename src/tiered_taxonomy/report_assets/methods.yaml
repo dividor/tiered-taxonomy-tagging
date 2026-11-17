@@ -40,7 +40,7 @@ methods:
     refs:
     - kluge2025
     - kahler2026
-    notebook: '04'
+    notebook: '03'
   select_all:
     name: LLM chooses from the full list
     sub: the LLM sees every label at once
@@ -53,7 +53,7 @@ methods:
     - Labels
     differs: Our own baseline. It only works for a small taxonomy.
     refs: []
-    notebook: '04'
+    notebook: '03'
   funnel_names:
     name: Search label names, then LLM chooses
     sub: an LLM picks from the 100 closest labels
@@ -68,7 +68,7 @@ methods:
     differs: One view of the text and no pruning by tier; MATCH uses eight views and prunes.
     refs:
     - match
-    notebook: '05'
+    notebook: '04'
   funnel_cards:
     name: Search label definitions, then LLM chooses
     sub: as above, matching written definitions
@@ -84,7 +84,7 @@ methods:
     refs:
     - match
     - slkr
-    notebook: '05'
+    notebook: '04'
   funnel_hybrid:
     name: Trained model and search, then LLM chooses
     sub: shortlist from both
@@ -99,7 +99,7 @@ methods:
     differs: Our own variant, run on the laws only.
     refs:
     - match
-    notebook: '05'
+    notebook: '04'
   funnel_cards_checked:
     name: Search definitions, LLM chooses and double-checks
     sub: a second call checks each label
@@ -114,7 +114,7 @@ methods:
     differs: Checks against LLM-written definitions; the paper {cite:cti2ttp} uses its field's official ones.
     refs:
     - cti2ttp
-    notebook: '07'
+    notebook: '06'
   funnel_cards_quote_filter:
     name: Search definitions, LLM chooses, keep quoted labels
     sub: no extra call
@@ -129,7 +129,7 @@ methods:
     differs: ''
     refs:
     - cti2ttp
-    notebook: '07'
+    notebook: '06'
   walk_strict:
     name: Tree walk, one branch
     sub: top-down, one path
@@ -143,7 +143,7 @@ methods:
     - Label
     differs: Plain top-down routing, used as the point of comparison.
     refs: []
-    notebook: '06'
+    notebook: '05'
   walk_branching:
     name: Tree walk, three branches
     sub: top-down, several paths
@@ -158,7 +158,7 @@ methods:
     differs: The paper {cite:gcp} trains its walk; ours prompts an LLM.
     refs:
     - gcp
-    notebook: '06'
+    notebook: '05'
   walk_anchored:
     name: Tree walk from search results
     sub: starts lower, looks ahead
@@ -174,7 +174,7 @@ methods:
     refs:
     - cas
     - toticd
-    notebook: '06'
+    notebook: '05'
   ki_fsprompt:
     name: KI-FSPrompt
     sub: LLM shown similar labelled documents
@@ -191,7 +191,7 @@ methods:
     refs:
     - kahler2025
     - kahler2026
-    notebook: '11'
+    notebook: '09'
   llm_ensemble:
     name: LLM-Ensemble
     sub: five LLMs write keywords, one rates them
@@ -208,7 +208,7 @@ methods:
     refs:
     - kluge2025
     - kahler2026
-    notebook: '11'
+    notebook: '09'
   omikuji:
     name: Omikuji
     sub: word counts, label trees
@@ -223,7 +223,7 @@ methods:
     differs: Trains on a laptop in minutes.
     refs:
     - omikuji
-    notebook: '10'
+    notebook: '08'
   xr_transformer:
     name: XR-Transformer
     sub: the leading trained model in a 2026 benchmark {cite:kahler2026}
@@ -240,7 +240,7 @@ methods:
     - xr
     - kahler2026
     - pecos
-    notebook: '10'
+    notebook: '08'
   embedding_classifier:
     name: Embedding classifier
     sub: BGE-M3 embeddings, one output per label
@@ -255,7 +255,7 @@ methods:
     differs: Our own baseline.
     refs:
     - bgem3
-    notebook: '10'
+    notebook: '08'
   knn:
     name: Similar documents
     sub: labels of the closest training documents
@@ -270,7 +270,7 @@ methods:
     differs: Our own baseline.
     refs:
     - bgem3
-    notebook: '10'
+    notebook: '08'
   label_search:
     name: Label search
     sub: closest label names, no training
@@ -285,7 +285,7 @@ methods:
     differs: Needs no labelled documents and no LLM.
     refs:
     - bgem3
-    notebook: '10'
+    notebook: '08'
   classifier:
     name: Fine-tuned classifier
     name_by_dataset:
@@ -307,7 +307,7 @@ methods:
     - humbert
     - legalbert
     - multieurlex
-    notebook: '14'
+    notebook: '10'
   humbert_recipe:
     name: Authors' HumBERT recipe
     sub: the paper's own trainer and settings, rerun {cite:humbert}
@@ -328,7 +328,7 @@ methods:
     refs:
     - humbert
     - classifier_trainer
-    notebook: '18'
+    notebook: '13'
   llm:
     name: Fine-tuned small LLM
     sub: Qwen2.5-7B, used as a classifier
@@ -345,7 +345,7 @@ methods:
     - dualmlc
     - qwen
     - lora
-    notebook: '14'
+    notebook: '10'
   reranker:
     name: Fine-tuned reranker
     sub: reads text and label together
@@ -360,7 +360,7 @@ methods:
     differs: The laws run stopped at its 4-hour limit, after one pass.
     refs:
     - bgereranker
-    notebook: '14'
+    notebook: '10'
   gliner:
     name: GLiNER2.5
     sub: reads text and label names together
@@ -375,7 +375,7 @@ methods:
     differs: Fine-tuned on each dataset; untuned, it scored far lower.
     refs:
     - gliner
-    notebook: '15'
+    notebook: '11'
   combined:
     name: Combined method
     sub: ''
@@ -409,7 +409,7 @@ methods:
       to trust each clue from development documents that none of the models had trained on.'
     differs: Our own method. Its second attempt on the laws adds each label's recent history.
     refs: []
-    notebook: 14 and 15
+    notebook: 10 and 11
 references:
   kahler2026:
     authors: Maximilian Kähler, Katja Konermann, Lisa Kluge and Markus Schumacher

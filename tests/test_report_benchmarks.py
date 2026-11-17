@@ -56,9 +56,9 @@ def test_humbert_rerun_sets_both_runs_beside_print_and_ours(inputs: rp.Inputs) -
     assert page.count("HumBERT recipe, rerun") >= 3
 
 
-def test_humset_v2_rows_come_from_notebook_21_on_the_whole_test_set(inputs: rp.Inputs) -> None:
+def test_humset_v2_rows_come_from_notebook_17_on_the_whole_test_set(inputs: rp.Inputs) -> None:
     rows = rp.method_rows(inputs, rp.HUMSET_V2)
-    assert {row.notebook for row in rows} == {"21"}
+    assert {row.notebook for row in rows} == {"17"}
     assert {row.key for row in rows} >= {"combined", "classifier", "ki_fsprompt", "humbert_recipe"}
     full = inputs.results["17_humset_full_test"][rp.HUMSET_V2]
     assert rp.like_for_like(inputs, rp.HUMSET_V2) == full

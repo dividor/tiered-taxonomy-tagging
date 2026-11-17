@@ -38,6 +38,17 @@ def test_every_method_and_reference_in_the_descriptions_is_complete(inputs: rp.I
         assert ref["title"] and ref["authors"] and ref["where"], name
 
 
+def test_every_notebook_a_card_names_is_in_the_repository(inputs: rp.Inputs) -> None:
+    existing = {path.name[:2] for path in (REPO / "notebooks").glob("[0-9][0-9]_*.ipynb")}
+    for name, entry in inputs.methods["methods"].items():
+        numbers = re.findall(r"\b\d\d\b", entry["notebook"])
+        numbers += re.findall(r"notebooks? (\d\d)\b", entry.get("differs", ""))
+        assert numbers and set(numbers) <= existing, (name, numbers)
+    for test_set in ("eurlex", "humset", rp.HUMSET_V2):
+        for method_row in rp.method_rows(inputs, test_set):
+            assert set(re.findall(r"\b\d\d\b", method_row.notebook)) <= existing, method_row.name
+
+
 def test_rows_are_best_first_with_distinct_names(inputs: rp.Inputs) -> None:
     for test_set in ("eurlex", "humset"):
         rows = rp.method_rows(inputs, test_set)

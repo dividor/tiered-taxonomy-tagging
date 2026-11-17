@@ -39,6 +39,7 @@ NOTEBOOKS = (
     "16_paper_measure",
     "17_humset_full_test",
 )
+FULL_TEST = "17_humset_full_test"
 SCOPE = {"newer": "with newer laws", "train_only": "training laws only"}
 LOCAL = frozenset({"omikuji", "embedding_classifier", "knn", "label_search"})
 GPU_RUNS = {
@@ -160,14 +161,16 @@ def like_for_like(inputs: Inputs, test_set: str) -> Mapping[str, Any]:
 
 
 def _scored_in(test_set: str) -> str:
-    return "21" if test_set == HUMSET_V2 else ""
+    """Return the notebook a row was scored in, when it is not the one its method's card names: every
+    HumSet 2.0.0 row is scored on the full test set in the last notebook."""
+    return FULL_TEST[:2] if test_set == HUMSET_V2 else ""
 
 
 def _paper(inputs: Inputs, test_set: str, family: str, key: str) -> Mapping[str, float] | None:
     """Return a HumSet row's score by HumBERT's measure: from notebook 17 for 2.0.0, from notebook 16 for
     1.0.0's sample, and None on other datasets. A HumSet row that was not scored raises."""
     if test_set == HUMSET_V2:
-        return dict(inputs.results["17_humset_full_test"][test_set]["paper"][family][key])
+        return dict(inputs.results[FULL_TEST][test_set]["paper"][family][key])
     if test_set == "humset":
         return dict(inputs.results["16_paper_measure"][test_set][family][key])
     return None
