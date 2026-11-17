@@ -31,6 +31,104 @@ papers behind it. Most methods are reduced forms of their papers; each module's 
 
 `scripts/download_data.py` fetches both, pinned to one version and checked byte for byte.
 
+## Results
+
+<!-- results:start -->
+
+Every number below comes from `outputs/results`, through the same code as the [interactive report](https://dividor.github.io/tiered-taxonomy-tagging/), which also has a card for each method. Scores run from 0 to 1, and higher is better. *Exact labels* gives credit only for the very label a person assigned; *Tier N* gives credit for landing in the right branch at that level. Recall columns are the share found of the correct labels that training used least, and that it never used. This section is written by `scripts/make_report.py`; do not edit it by hand.
+
+### Against the published benchmarks
+
+**EU laws: mean R-Precision on all 5,000 test laws.** For each law, take as many of the top-ranked labels as it really has, and count the share that are correct.
+
+| Method | Version | Mean R-Precision |
+| --- | --- | ---: |
+| Combined method, second attempt | with newer laws | 0.640 |
+| Combined method, first attempt | with newer laws | 0.624 |
+| Combined method, second attempt | training laws only | 0.610 |
+| Combined method, first attempt | training laws only | 0.600 |
+| Fine-tuned Legal-BERT | with newer laws | 0.529 |
+| Fine-tuned Legal-BERT | training laws only | 0.500 |
+| BERT, published | the benchmark to beat (Chalkidis et al., 2021) | 0.484 |
+| XR-Transformer | training laws only | 0.474 |
+| Omikuji | training laws only | 0.471 |
+| Embedding classifier | training laws only | 0.459 |
+| Similar documents | training laws only | 0.424 |
+| Label search | no training | 0.139 |
+
+**HumSet 2.0.0: macro F1 by label group on all 12,896 test excerpts**, the measure the HumBERT paper reports. Its published figures have two decimals; their mean is worked out from them.
+
+| Label group | HumBERT, published | HumBERT recipe, rerun | Combined method | 95% interval |
+| --- | ---: | ---: | ---: | ---: |
+| Sectors | 0.78 | 0.778 | 0.790 | 0.780 to 0.799 |
+| Pillars 1D | 0.70 | 0.685 | 0.705 | 0.696 to 0.718 |
+| Subpillars 1D | 0.54 | 0.548 | 0.574 | 0.562 to 0.588 |
+| Pillars 2D | 0.71 | 0.705 | 0.721 | 0.707 to 0.735 |
+| Subpillars 2D | 0.51 | 0.501 | 0.527 | 0.512 to 0.541 |
+| Five-group mean | 0.648 | 0.643 | 0.663 | 0.657 to 0.670 |
+
+### EU laws (MultiEURLEX): 600 test laws, EuroVoc's top three tiers
+
+| Method | Kind | Exact labels | Tier 1 | Tier 2 | Tier 3 | Rarest quarter recall | Never-seen recall | Labels per law | Cost |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Combined method, second attempt, with newer laws | Combined | 0.57 | 0.75 | 0.71 | 0.71 | 0.17 | 0.01 | 3.9 | $10.92 GPU, once |
+| Combined method, second attempt, training laws only | Combined | 0.55 | 0.77 | 0.72 | 0.72 | 0.09 | 0.00 | 5.1 | $3.85 GPU, once |
+| Combined method, first attempt, with newer laws | Combined | 0.55 | 0.73 | 0.70 | 0.70 | 0.12 | 0.02 | 3.8 | $8.46 GPU, once |
+| Combined method, first attempt, training laws only | Combined | 0.53 | 0.73 | 0.69 | 0.68 | 0.05 | 0.00 | 3.9 | $3.85 GPU, once |
+| Fine-tuned Legal-BERT, with newer laws | Fine-tuned | 0.50 | 0.75 | 0.70 | 0.69 | 0.13 | 0.01 | 5.2 | $1.09 GPU, once |
+| Fine-tuned Legal-BERT, training laws only | Fine-tuned | 0.47 | 0.73 | 0.68 | 0.67 | 0.06 | 0.00 | 4.6 | $1.03 GPU, once |
+| GLiNER2.5, with newer laws | Fine-tuned | 0.47 | 0.74 | 0.68 | 0.67 | 0.19 | 0.06 | 4.6 | $2.46 GPU, once |
+| Omikuji, with newer laws | Trained | 0.46 | 0.69 | 0.65 | 0.63 | 0.01 | 0.00 | 4.8 | laptop |
+| Fine-tuned small LLM, with newer laws | Fine-tuned | 0.46 | 0.70 | 0.66 | 0.66 | 0.02 | 0.00 | 4.1 | $3.37 GPU, once |
+| Embedding classifier, with newer laws | Trained | 0.44 | 0.71 | 0.65 | 0.64 | 0.01 | 0.00 | 5.5 | laptop |
+| XR-Transformer, training laws only | Trained | 0.43 | 0.70 | 0.65 | 0.64 | 0.00 | 0.00 | 4.0 | $2.82 GPU, once |
+| Omikuji, training laws only | Trained | 0.43 | 0.67 | 0.62 | 0.61 | 0.00 | 0.00 | 4.2 | laptop |
+| Similar documents, with newer laws | Trained | 0.43 | 0.71 | 0.64 | 0.60 | 0.11 | 0.00 | 5.0 | laptop |
+| Embedding classifier, training laws only | Trained | 0.42 | 0.71 | 0.64 | 0.62 | 0.00 | 0.00 | 5.5 | laptop |
+| Fine-tuned reranker, with newer laws | Fine-tuned | 0.40 | 0.68 | 0.62 | 0.61 | 0.12 | 0.07 | 4.2 | $4.00 GPU, once |
+| Similar documents, training laws only | Trained | 0.39 | 0.63 | 0.57 | 0.53 | 0.02 | 0.00 | 3.4 | laptop |
+| KI-FSPrompt | LLM + examples | 0.34 | 0.68 | 0.59 | 0.54 | 0.25 | 0.25 | 9.8 | $0.40 per 1,000 |
+| Trained model and search, then LLM chooses | LLM + trained model | 0.24 | 0.54 | 0.42 | 0.36 | 0.15 | 0.20 | 4.4 | $0.61 per 1,000 |
+| LLM keyword pipeline | LLM | 0.21 | 0.61 | 0.46 | 0.38 | 0.35 | 0.49 | 15.3 | $0.87 per 1,000 |
+| Search label names, then LLM chooses | LLM | 0.19 | 0.43 | 0.32 | 0.27 | 0.15 | 0.21 | 3.9 | $0.46 per 1,000 |
+| LLM-Ensemble | LLM | 0.17 | 0.50 | 0.37 | 0.30 | 0.18 | 0.26 | 10.0 | $6.69 per 1,000 |
+| Search label definitions, then LLM chooses | LLM | 0.17 | 0.41 | 0.31 | 0.26 | 0.18 | 0.23 | 3.8 | $0.59 per 1,000 |
+| Search definitions, LLM chooses, keep quoted labels | LLM | 0.15 | 0.37 | 0.27 | 0.23 | 0.14 | 0.18 | 2.7 | $0.59 per 1,000 |
+| Search definitions, LLM chooses and double-checks | LLM | 0.15 | 0.36 | 0.26 | 0.22 | 0.15 | 0.20 | 3.0 | $0.80 per 1,000 |
+| Tree walk from search results | LLM | 0.14 | 0.39 | 0.25 | 0.17 | 0.12 | 0.17 | 2.9 | $0.88 per 1,000 |
+| Label search | No training | 0.12 | 0.50 | 0.33 | 0.25 | 0.10 | 0.19 | 9.8 | laptop |
+| Tree walk, three branches | LLM | 0.05 | 0.32 | 0.14 | 0.08 | 0.08 | 0.10 | 4.2 | $1.35 per 1,000 |
+| Tree walk, one branch | LLM | 0.02 | 0.18 | 0.06 | 0.03 | 0.01 | 0.03 | 1.4 | $0.59 per 1,000 |
+
+### Humanitarian excerpts (HumSet 2.0.0): all 12,896 test excerpts
+
+| Method | Kind | Macro F1, sectors and pillars (paper's Avg) | Exact labels | Tier 1 | Tier 2 | Macro F1 | Rarest quarter recall | Never-seen recall | Labels per excerpt | Cost |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| XR-Transformer | Trained | 0.49 | 0.72 | 0.76 | 0.69 | 0.51 | 0.44 | none | 2.1 | $1.38 GPU, once |
+| Combined method | Combined | 0.74 | 0.72 | 0.78 | 0.71 | 0.66 | 0.58 | none | 2.4 | $0.67 GPU, once |
+| Authors' HumBERT recipe | Fine-tuned | 0.72 | 0.69 | 0.77 | 0.68 | 0.63 | 0.33 | none | 2.3 | $1.26 GPU, once |
+| Similar documents | Trained | 0.65 | 0.69 | 0.73 | 0.65 | 0.59 | 0.41 | none | 2.2 | laptop |
+| Fine-tuned HumBERT | Fine-tuned | 0.72 | 0.68 | 0.76 | 0.68 | 0.64 | 0.45 | none | 2.2 | $0.67 GPU, once |
+| Omikuji | Trained | 0.63 | 0.67 | 0.71 | 0.64 | 0.57 | 0.44 | none | 2.3 | laptop |
+| Embedding classifier | Trained | 0.49 | 0.63 | 0.68 | 0.59 | 0.47 | 0.47 | none | 2.2 | laptop |
+| KI-FSPrompt | LLM + examples | 0.58 | 0.58 | 0.65 | 0.57 | 0.53 | 0.59 | none | 2.8 | $0.15 per 1,000 |
+| Fine-tuned reranker | Fine-tuned | 0.61 | 0.54 | 0.63 | 0.55 | 0.51 | 0.24 | none | 3.0 | $3.00 GPU, once |
+| GLiNER2.5 | Fine-tuned | 0.58 | 0.50 | 0.62 | 0.45 | 0.46 | 0.11 | none | 2.6 | $2.80 GPU, once |
+| Fine-tuned small LLM | Fine-tuned | 0.57 | 0.49 | 0.62 | 0.44 | 0.45 | 0.12 | none | 2.4 | $1.67 GPU, once |
+| Tree walk, three branches | LLM | 0.40 | 0.41 | 0.47 | 0.26 | 0.30 | 0.42 | none | 1.8 | $0.16 per 1,000 |
+| LLM chooses from the full list | LLM | 0.43 | 0.39 | 0.48 | 0.32 | 0.35 | 0.44 | none | 1.9 | $0.15 per 1,000 |
+| Search label definitions, then LLM chooses | LLM | 0.42 | 0.37 | 0.45 | 0.33 | 0.35 | 0.46 | none | 1.7 | $0.29 per 1,000 |
+| Search label names, then LLM chooses | LLM | 0.43 | 0.36 | 0.46 | 0.30 | 0.35 | 0.54 | none | 2.4 | $0.18 per 1,000 |
+| Tree walk, one branch | LLM | 0.36 | 0.36 | 0.42 | 0.22 | 0.26 | 0.24 | none | 1.0 | $0.13 per 1,000 |
+| LLM keyword pipeline | LLM | 0.38 | 0.34 | 0.44 | 0.23 | 0.29 | 0.28 | none | 1.4 | $0.33 per 1,000 |
+| Search definitions, LLM chooses and double-checks | LLM | 0.40 | 0.34 | 0.42 | 0.30 | 0.33 | 0.39 | none | 1.5 | $0.39 per 1,000 |
+| Search definitions, LLM chooses, keep quoted labels | LLM | 0.37 | 0.32 | 0.40 | 0.28 | 0.31 | 0.37 | none | 1.4 | $0.29 per 1,000 |
+| LLM-Ensemble | LLM | 0.37 | 0.32 | 0.43 | 0.27 | 0.29 | 0.27 | none | 2.7 | $2.84 per 1,000 |
+| Tree walk from search results | LLM | 0.20 | 0.22 | 0.33 | 0.30 | 0.20 | 0.40 | none | 1.5 | $0.22 per 1,000 |
+| Label search | No training | 0.33 | 0.11 | 0.25 | 0.07 | 0.25 | 0.52 | none | 7.5 | laptop |
+
+<!-- results:end -->
+
 ## Running it yourself
 
 Everything runs from one command, and every step it can skip, it does: each model reply, embedding and trained

@@ -51,11 +51,12 @@ jobs:
       - name: Run unit tests
         run: uv run pytest -q
 
-      # The report is built from the committed results alone, so it must come out byte for byte the same.
-      - name: Check the report matches the committed results
+      # The report and the README's results section are built from the committed results alone, so they must
+      # come out byte for byte the same.
+      - name: Check the report and README match the committed results
         run: |
           uv run python scripts/make_report.py
-          git diff --exit-code outputs/report/index.html
+          git diff --exit-code outputs/report/index.html README.md
 
   security-scan:
     runs-on: ubuntu-latest

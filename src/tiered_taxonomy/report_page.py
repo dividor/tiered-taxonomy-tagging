@@ -598,7 +598,7 @@ def findings(inputs: Inputs, laws: Sequence[Row], excerpts: Sequence[Row]) -> st
 Bars = list[tuple[str, str, float, str]]
 
 
-def _benchmark_rows(inputs: Inputs) -> tuple[Bars, Bars]:
+def benchmark_rows(inputs: Inputs) -> tuple[Bars, Bars]:
     r = inputs.results
     c = paper_cites(inputs)
     mrp = r["12_published_benchmarks"]["eurlex_mrp"]
@@ -688,7 +688,7 @@ ROLLUP_TIPS = {
 def benchmarks(inputs: Inputs) -> str:
     """Return the comparison with the published benchmarks on the full test sets."""
     r = inputs.results
-    laws, on_v2 = _benchmark_rows(inputs)
+    laws, on_v2 = benchmark_rows(inputs)
     rerun = humbert_rerun(r)
     printed, paper, v2 = rerun["printed"], rerun["paper"], rerun["combined_v2"]
     v2_ci = rerun["combined_v2_intervals"]
