@@ -21,6 +21,7 @@ from tiered_taxonomy.report_page import (
     header,
     humset_source,
     published_measure,
+    with_links,
 )
 from tiered_taxonomy.report_papers import Published
 
@@ -372,5 +373,13 @@ def test_each_dataset_section_links_its_sources_and_says_who_labelled_it() -> No
     assert 'href="https://huggingface.co/datasets/nlp-thedeep/humset"' in excerpts
     assert 'href="https://blog.thedeep.io/humset/"' in excerpts
     assert "it is not a standard published on its own" in excerpts
+    assert (
+        '(Chalkidis et al., 2021; <a href="https://huggingface.co/datasets/coastalcph/multi_eurlex"' in laws
+    )
+    assert '>Dataset</a>; <a href="https://blog.thedeep.io/humset/"' in excerpts
+    assert "get the dataset" not in laws + excerpts
+    assert with_links("(A, 2020)", "x", "y") == "(A, 2020; x; y)"
+    with pytest.raises(ValueError, match="bracketed"):
+        with_links("A, 2020", "x")
     page = " ".join(build_page(REPO).split())
     assert page.count("<strong>Where the labels come from.</strong>") == 2

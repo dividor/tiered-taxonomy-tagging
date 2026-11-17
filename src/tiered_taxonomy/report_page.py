@@ -511,11 +511,18 @@ def _out(url: str, text: str) -> str:
     return f'<a href="{esc(url)}" target="_blank" rel="noopener">{esc(text)}</a>'
 
 
+def with_links(citation: str, *links: str) -> str:
+    """Return a bracketed citation with more links inside its brackets: "(Fekih et al., 2022; Dataset)"."""
+    if not (citation.startswith("(") and citation.endswith(")")):
+        raise ValueError(f"not a bracketed citation: {citation}")
+    return citation[:-1] + "".join(f"; {link}" for link in links) + ")"
+
+
 def eurlex_source(multieurlex: str) -> str:
     """Return where the EU laws and their labels come from, why EuroVoc is the vocabulary for them, and who
     uses it. `multieurlex` is the MultiEURLEX paper's citation."""
     return f"""<p class=note><strong>Where the labels come from.</strong> The laws and their labels
-  are MultiEURLEX {multieurlex}; {_out(_hf(dl.MULTI_EURLEX), "get the dataset")}. The EU Publications
+  are MultiEURLEX {with_links(multieurlex, _out(_hf(dl.MULTI_EURLEX), "Dataset"))}. The EU Publications
   Office tagged each law with labels from {_out(eurovoc.PAGE, "EuroVoc")}, the thesaurus it manages for
   the EU's work, in the 24 official EU languages and three more. Because the EU publishes and maintains it,
   and its own institutions use it, EuroVoc is the vocabulary EU documents are indexed with. Its users also
@@ -526,8 +533,8 @@ def humset_source(humset: str) -> str:
     """Return where the humanitarian excerpts and their labels come from, and who made the framework.
     `humset` is the HumSet paper's citation."""
     return f"""<p class=note><strong>Where the labels come from.</strong> The excerpts and their labels
-  are HumSet {humset}; {_out(_hf(dl.HUMSET), "get the dataset")} or read its
-  {_out(HUMSET_PAGE, "project page")}. Humanitarian analysts in 46 response projects picked them from
+  are HumSet {with_links(humset, _out(_hf(dl.HUMSET), "Dataset"), _out(HUMSET_PAGE, "Project page"))}.
+  Humanitarian analysts in 46 response projects picked them from
   crisis documents on DEEP, an analysis platform run by Data Friendly Space, a US-based international NGO,
   whose board includes OCHA, UNHCR, UNICEF and the IFRC. Each project tagged with its own analysis
   framework, 11 between them, and the HumSet authors merged these into one common framework of sectors,
