@@ -17,7 +17,7 @@ from typing import Any
 import yaml
 
 from tiered_taxonomy import gpu_jobs as gj
-from tiered_taxonomy.report_papers import Published, cited_methods
+from tiered_taxonomy.report_papers import Published, cited_methods, link_citations
 
 ASSETS = Path(__file__).parent / "report_assets"
 NOTEBOOKS = (
@@ -245,7 +245,7 @@ def combined_name(inputs: Inputs, key: str, test_set: str = "humset") -> tuple[s
         names = [plain_case(method_name(inputs.methods, source, test_set)) for source in sources]
         listed = f"{', '.join(names[:-1])} and {names[-1]}" if len(names) > 1 else names[0]
         if test_set == HUMSET_V2:
-            return "Combined method", f"Weighs {listed}, chosen on version 2.0.0's development excerpts"
+            return "Combined method", f"Weighs {listed}, chosen on development excerpts"
         first = inputs.results["10_combined_method"]["humset"]["sources"]
         second = inputs.results["11_second_attempt"]["humset"]["sources"]
         if sorted(first) == sorted(second):
@@ -498,7 +498,7 @@ def results_table(
 
 def ref_html(ref: Mapping[str, Any]) -> str:
     """Return one source as a list item: its linked title, then its authors, year and where it appeared."""
-    when = f" ({ref['year']})" if ref.get("year") else ""
+    when = f" ({ref['year']}{ref.get('year_suffix', '')})" if ref.get("year") else ""
     return (
         f'<li><a href="{esc(ref["link"])}" target="_blank" rel="noopener">{esc(ref["title"])}</a>'
         f"<span>{esc(ref['authors'])}{when}. {esc(ref['where'])}.</span></li>"
@@ -511,6 +511,11 @@ def best_scores(rows: Sequence[Row]) -> dict[str, float]:
     best = {"Exact": max(r.f1 for r in rows)}
     best |= {f"Tier {t}": max(r.tier(t) for r in rows) for t in tiers}
     return best
+
+
+def linked(text: str, refs: Mapping[str, Mapping[str, Any]]) -> str:
+    """Return card text as HTML, escaped, with each citation linked to its source."""
+    return link_citations(esc(text), refs)
 
 
 def card(inputs: Inputs, row: Row, unit: str, units: str, best: Mapping[str, float]) -> dict[str, Any]:
@@ -536,21 +541,21 @@ def card(inputs: Inputs, row: Row, unit: str, units: str, best: Mapping[str, flo
         "sub": row.sub,
         "kind": row.kind,
         "kindClass": {k["kind"]: k["css"] for k in inputs.methods["kinds"]}[row.kind],
-        "summary": entry["summary"],
+        "summary": linked(entry["summary"], refs),
         "steps": entry["steps"],
         "scores": [[label, round(value, 3), round(best[label], 3)] for label, value in measured.items()],
         "tiles": tiles,
         "combines": row.sources,
-        "cluesIntro": entry.get("clues_intro", ""),
+        "cluesIntro": linked(entry.get("clues_intro", ""), refs),
         "clues": [
             [c["clue"], c["meaning"]]
             for c in entry.get("clues", [])
             if row.priors or not c.get("only_with_priors")
         ],
-        "scorer": entry.get("scorer", ""),
+        "scorer": linked(entry.get("scorer", ""), refs),
         "priors": row.priors,
         "settings": settings,
-        "differs": entry["differs"],
+        "differs": linked(entry["differs"], refs),
         "notebook": row.notebook or entry["notebook"],
         "refs": "".join(ref_html(refs[k]) for k in entry["refs"]),
     }

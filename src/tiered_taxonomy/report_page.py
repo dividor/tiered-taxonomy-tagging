@@ -8,6 +8,8 @@ from pathlib import Path
 from typing import Any
 
 from tiered_taxonomy import benchmarks as bm
+from tiered_taxonomy import downloads as dl
+from tiered_taxonomy import eurovoc
 from tiered_taxonomy import report_browser as rb
 from tiered_taxonomy.report import (
     ASSETS,
@@ -40,7 +42,7 @@ from tiered_taxonomy.report import (
     tier_one_average,
     tiers_not_led_by_combined,
 )
-from tiered_taxonomy.report_papers import Published, cite
+from tiered_taxonomy.report_papers import Published, cite, link_citations
 
 FONTS = (
     "https://fonts.googleapis.com/css2?family=Poppins:wght@600;700"
@@ -85,7 +87,7 @@ const el = (tag, cls, text) => {
 function showCard(key) {
   const c = CARDS[key];
   $("card-title").textContent = c.title;
-  $("card-summary").textContent = c.summary;
+  $("card-summary").innerHTML = c.summary;
   $("card-kind").textContent = c.kind;
   $("card-kind").className = "chip " + c.kindClass;
   $("card-steps").replaceChildren(...c.steps.flatMap((step, i) => {
@@ -99,9 +101,9 @@ function showCard(key) {
   $("card-steps").style.setProperty("--cols", c.steps.map(() => "minmax(0, 1fr)").join(" auto "));
   $("card-combines").replaceChildren(...c.combines.map((name) => el("li", "chip k-none", name)));
   $("card-combines-wrap").hidden = !c.combines.length;
-  $("card-clues-intro").textContent = c.cluesIntro;
+  $("card-clues-intro").innerHTML = c.cluesIntro;
   $("card-clues").replaceChildren(...c.clues.flatMap(([k, v]) => [el("dt", "", k), el("dd", "", v)]));
-  $("card-scorer").textContent = c.scorer;
+  $("card-scorer").innerHTML = c.scorer;
   $("card-clues-wrap").hidden = !c.clues.length;
   $("card-scores").replaceChildren(...c.scores.map(([label, value, best]) => {
     const line = el("div", "score");
@@ -118,7 +120,7 @@ function showCard(key) {
     return tile;
   }));
   $("card-settings").textContent = c.settings; $("card-settings").hidden = !c.settings;
-  $("card-differs").textContent = c.differs; $("card-differs-wrap").hidden = !c.differs;
+  $("card-differs").innerHTML = c.differs; $("card-differs-wrap").hidden = !c.differs;
   $("card-refs").innerHTML = c.refs; $("card-refs-wrap").hidden = !c.refs;
   $("card-nb").textContent = c.notebook;
   dlg.showModal();
@@ -422,6 +424,7 @@ def results(
     v2 = inputs.results["15_humset_v2"]
     v2_test = inputs.results["17_humset_full_test"][HUMSET_V2]["sizes"]["test"]
     c = paper_cites(inputs)
+    check_v2_macro_lead(v2_rows)
     return f"""<section>
   <div class=col>
     <span class=eyebrow>Every method on the same documents</span>
@@ -456,6 +459,7 @@ def results(
   {near_miss(mix, inputs.results["label_browser"]["eurlex"]["tree"], c["multieurlex"])}
   <h3>EU laws (MultiEURLEX): 600 test laws, EuroVoc's top three tiers</h3>
   {rb.data_links("eurlex", inputs.results["label_browser"])}
+  {eurlex_source(c["multieurlex"])}
   <p class=note>The laws are split by date, so the test laws are newer than the training laws. Rows marked
   "with
   newer laws" were also trained on newer laws from the development split, which brings them closer in time
@@ -469,7 +473,7 @@ def results(
   tier 2 and {mix.level_agreement[2]:.1%} at tier 3. So these tier scores cannot be set beside the paper's
   results by level.</p>
   {laws_table}
-  {v2_section(v2, v2_test, v2_table + v2_leads(v2_rows), c["humbert"], inputs.results["label_browser"])}
+  {v2_section(v2, v2_test, v2_table, c, inputs.results["label_browser"])}
   {first_version_line(inputs, v1_rows)}
   <p class=note>LLM methods used <code>{esc(models["main"]["model"])}</code> and
   <code>{esc(models["small"]["model"])}</code> through Hugging Face Inference Providers, except
@@ -481,29 +485,53 @@ def results(
 """
 
 
-def v2_leads(rows: Sequence[Row]) -> str:
-    """Return a note on which method leads the HumSet 2.0.0 table by each measure. Rows are best first by
-    exact labels. When something other than the combined method leads by exact labels, it gives both scores
-    and says that the gap has not been tested against chance. A row without a macro F1 raises."""
+def check_v2_macro_lead(rows: Sequence[Row]) -> None:
+    """Raise unless the combined method leads the HumSet 2.0.0 table by macro F1, as the page's summary says.
+    A row without a macro F1 raises."""
 
     def macro(row: Row) -> float:
         if row.paper is None:
             raise ValueError(f"on HumSet 2.0.0 {row.key} has no macro F1")
         return row.paper["Mean"]
 
-    combined = next(row for row in rows if row.kind == "Combined")
-    top = rows[0]
     by_macro = max(rows, key=macro)
-    if top is combined and by_macro is combined:
-        return "<p class=note>The combined method has the top score by exact labels and by macro F1.</p>"
-    if by_macro is not combined:
+    if by_macro.kind != "Combined":
         raise ValueError(f"on HumSet 2.0.0 {by_macro.key} leads by macro F1, not the combined method")
-    return (
-        f"<p class=note>By exact labels the {esc(plain_case(top.name))} has the top score, {top.f1:.3f}, "
-        f"against the combined method's {combined.f1:.3f}; by macro F1 the combined method leads, "
-        f"{macro(combined):.3f} against {macro(top):.3f}. We have not tested whether the "
-        "exact-labels gap is larger than chance.</p>"
-    )
+
+
+HUMSET_PAGE = "https://blog.thedeep.io/humset/"
+
+
+def _hf(repo: str) -> str:
+    return f"https://huggingface.co/datasets/{repo}"
+
+
+def _out(url: str, text: str) -> str:
+    return f'<a href="{esc(url)}" target="_blank" rel="noopener">{esc(text)}</a>'
+
+
+def eurlex_source(multieurlex: str) -> str:
+    """Return where the EU laws and their labels come from, why EuroVoc is the vocabulary for them, and who
+    uses it. `multieurlex` is the MultiEURLEX paper's citation."""
+    return f"""<p class=note><strong>Where the labels come from.</strong> The laws and their labels
+  are MultiEURLEX {multieurlex}; {_out(_hf(dl.MULTI_EURLEX), "get the dataset")}. The EU Publications
+  Office tagged each law with labels from {_out(eurovoc.PAGE, "EuroVoc")}, the thesaurus it manages for
+  the EU's work, in the 24 official EU languages and three more. Because the EU publishes and maintains it,
+  and its own institutions use it, EuroVoc is the vocabulary EU documents are indexed with. Its users also
+  include national and regional parliaments in Europe, national governments and private users.</p>"""
+
+
+def humset_source(humset: str) -> str:
+    """Return where the humanitarian excerpts and their labels come from, and who made the framework.
+    `humset` is the HumSet paper's citation."""
+    return f"""<p class=note><strong>Where the labels come from.</strong> The excerpts and their labels
+  are HumSet {humset}; {_out(_hf(dl.HUMSET), "get the dataset")} or read its
+  {_out(HUMSET_PAGE, "project page")}. Humanitarian analysts in 46 response projects picked them from
+  crisis documents on DEEP, an analysis platform run by Data Friendly Space, a US-based international NGO,
+  whose board includes OCHA, UNHCR, UNICEF and the IFRC. Each project tagged with its own analysis
+  framework, 11 between them, and the HumSet authors merged these into one common framework of sectors,
+  pillars and subpillars. Unlike EuroVoc, it is not a standard published on its own, but a merger of the
+  frameworks these projects worked with.</p>"""
 
 
 def _listed(labels: Sequence[str]) -> str:
@@ -511,20 +539,23 @@ def _listed(labels: Sequence[str]) -> str:
     return quoted[0] if len(quoted) == 1 else f"{', '.join(quoted[:-1])} and {quoted[-1]}"
 
 
-def v2_section(v2: dict[str, Any], test: int, table: str, humbert: str, browser: Mapping[str, Any]) -> str:
+def v2_section(
+    v2: dict[str, Any], test: int, table: str, cites: Mapping[str, str], browser: Mapping[str, Any]
+) -> str:
     """Return the HumSet table: every method trained on HumSet 2.0.0 and scored on all `test` of its test
-    excerpts. `humbert` is the HumBERT paper's citation."""
+    excerpts. `cites` holds the papers' citations by key."""
     labels = v2["labels"]
     return f"""<h3>Humanitarian excerpts (HumSet 2.0.0): all {test:,} test excerpts, the HumBERT paper's
   test set</h3>
   {rb.data_links("humset", browser)}
+  {humset_source(cites["humset"])}
   <p class=note>Excerpts in English, French and Spanish. Tier 1 holds the sectors and pillars, and tier 2 the
   subpillars. A rare label here was given to at most {v2["rare_at_most"]:,} of the training excerpts. Every
   label in these test excerpts was given in training, so the never-seen column reads none. Every
   method, LLM methods included, was trained, tuned and run on this version's own splits (notebooks 15 and
-  17), so the macro F1 columns score the paper's own test set by its measure {humbert} and can be set beside
-  its printed figures; the note on the recipe's row says what the paper reported and how our cut-offs differ
-  from its trainer's.</p>
+  17), so the macro F1 columns score the paper's own test set by its measure {cites["humbert"]} and can be
+  set beside its printed figures; the note on the recipe's row says what the paper reported and how our
+  cut-offs differ from its trainer's.</p>
   <details class=more><summary>How the labels differ from HumSet 1.0.0</summary>
   <p class=note>Version 2.0.0 uses {labels["in_use"]} labels. Only it has
   {_listed(labels["only_in_2.0.0"])}; only 1.0.0 has {_listed(labels["only_in_1.0.0"])}. Version 2.0.0
@@ -708,7 +739,7 @@ ROLLUP_TIPS = {
     "share": "Keep a label if it is on at least {share:.0%} of the pieces, and always on at least one.",
     "any": "Keep every label found in any piece.",
     "certainty": "Add up how sure the model was about a label on each piece, counting doubt against it, and "
-    "keep labels with a positive total (Wu et al., 2026).",
+    "keep labels with a positive total {tef}.",
     "cost": "What the LLM calls cost for all of these documents.",
 }
 
@@ -724,9 +755,6 @@ def benchmarks(inputs: Inputs) -> str:
     behind = [g for g in HUMSET_GROUPS if v2[g] < printed[g]]
     groups = [*HUMSET_GROUPS, "Mean"]
     c = paper_cites(inputs)
-
-    def span(bounds: Sequence[float]) -> str:
-        return f"{bounds[0]:.3f} to {bounds[1]:.3f}"
 
     def cell(bounds: Sequence[float]) -> str:
         return f"{bounds[0]:.3f}&ndash;{bounds[1]:.3f}"
@@ -780,9 +808,9 @@ def benchmarks(inputs: Inputs) -> str:
   <th class=num>{info("Combined method", BENCH_TIPS["combined"])}</th>
   <th class=num>{info("95% interval", BENCH_TIPS["interval"])}</th></tr></thead>
   <tbody>{rows}</tbody></table></div>
-  <p>On HumSet 2.0.0, the version HumBERT's published figures come from, the combined method scores
-  {v2["Mean"]:.3f} on the mean against the published {printed["Mean"]:.3f}, and its 95% interval,
-  {span(v2_ci["Mean"])}, lies above it. Its interval lies wholly above the published figure in
+  <p>On HumSet 2.0.0, the version HumBERT's published figures come from, the combined method's 95% interval
+  for the five-group mean lies wholly above the published figure. Its interval lies wholly above the
+  published figure in
   {_and(clear)}{_behind(behind, v2, printed)}. It beats HumBERT's recipe, rerun with the authors' own code
   and settings, in every group.</p>
   <p>Whether that rerun reproduces the published figures depends on how subpillar scores are averaged, which
@@ -790,11 +818,9 @@ def benchmarks(inputs: Inputs) -> str:
   {rerun["paper_gap"]:.3f} of every published group. Averaging subpillars within each pillar first, as the
   authors' code does, it falls short in {_shortfalls(rerun["trainer_misses"])}, so notebook 13 records it as
   not reproducing the paper. The published figures have two decimals; their mean is worked out from them.</p>
-  <p>The HumBERT paper {c["humbert"]} prints no mean of the five groups. Its own "Avg" column,
-  {tier_one[0]:.2f}, is the tier-1
-  average: the mean of Sectors, Pillars 1D and Pillars 2D, leaving out both subpillar groups, which score
-  lowest. On that average the combined method scores {tier_one[2]:.3f} on 2.0.0, and the recipe rerun
-  {tier_one[1]:.3f}.</p>
+  <p>The HumBERT paper {c["humbert"]} prints no mean of the five groups. Its own "Avg" column is the
+  tier-1 average in the table's last row: the mean of Sectors, Pillars 1D and Pillars 2D, leaving out both
+  subpillar groups, which score lowest.</p>
   <p class=note>The recipe rerun is one run with one seed, so it has no interval.</p>
 </section>
 """
@@ -809,6 +835,7 @@ def long_documents(inputs: Inputs) -> str:
     """Return the comparison of rules for labelling long documents in pieces."""
     rows = ""
     share = inputs.config["rollup"]["majority_share"]
+    tef = cite(inputs.methods["references"]["tef"])
     for test_set, label in (("eurlex", "120 long EU laws"), ("humset", "200 humanitarian reports")):
         r = inputs.results["07_rollup"]["results"][test_set]
         cells = "".join(
@@ -828,11 +855,11 @@ def long_documents(inputs: Inputs) -> str:
   <th class=num>{info("First piece only", ROLLUP_TIPS["first"])}</th>
   <th class=num>{info("Label in a share of pieces", ROLLUP_TIPS["share"].format(share=share))}</th>
   <th class=num>{info("Label in any piece", ROLLUP_TIPS["any"])}</th>
-  <th class=num>{info("Weighted by certainty", ROLLUP_TIPS["certainty"])}</th>
+  <th class=num>{info("Weighted by certainty", ROLLUP_TIPS["certainty"].format(tef=tef))}</th>
   <th class=num>{info("LLM cost", ROLLUP_TIPS["cost"])}</th></tr></thead><tbody>{rows}</tbody></table></div>
   <p class=note>Exact-label F1, with the average number of labels each rule gave a document. The
   certainty-weighted
-  rule follows Wu et al. (2026), listed below.</p>
+  rule follows {tef}, listed below.</p>
 </section>
 """
 
@@ -904,7 +931,8 @@ def build_page(repo: Path) -> str:
         f'<meta name="claude:viewport-fit-sides" content="cover">\n'
         f'<link rel="preconnect" href="https://fonts.googleapis.com">\n'
         f'<link rel="stylesheet" href="{FONTS}">\n'
-        f"<style>\n{style}</style>\n<main>\n{body}</main>\n{CARD_DIALOG}{rb.DIALOGS}"
+        f"<style>\n{style}</style>\n<main>\n{link_citations(body, inputs.methods['references'])}</main>\n"
+        f"{CARD_DIALOG}{rb.DIALOGS}"
         f'<script type="application/json" id="cards-data">{data}</script>\n'
         f"{rb.page_data(inputs.results['label_browser'])}"
         f"<script>\n{SCRIPT}\n{rb.SCRIPT}</script>\n"

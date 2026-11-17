@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import html
 import re
 from collections.abc import Mapping
 from dataclasses import dataclass
@@ -26,7 +27,7 @@ def author_year(ref: Mapping[str, Any]) -> str:
         who = f"{surnames[0]} and {surnames[1]}"
     else:
         who = surnames[0]
-    return f"{who}, {ref['year']}"
+    return f"{who}, {ref['year']}{ref.get('year_suffix', '')}"
 
 
 def cite(*refs: Mapping[str, Any]) -> str:
@@ -34,6 +35,37 @@ def cite(*refs: Mapping[str, Any]) -> str:
     if not refs:
         raise ValueError("a citation needs at least one source")
     return "(" + "; ".join(author_year(ref) for ref in refs) + ")"
+
+
+def _link(url: str, text: str) -> str:
+    return f'<a href="{html.escape(url)}" target="_blank" rel="noopener">{text}</a>'
+
+
+PIECES = re.compile(r"(<script\b.*?</script>|<[^>]+>)", re.S | re.I)
+
+
+def link_citations(page: str, refs: Mapping[str, Mapping[str, Any]]) -> str:
+    """Return HTML with each citation's "Authors, year" in the text linked to that source. Tags, their
+    attributes (tooltips among them), scripts and text already inside a link are left alone."""
+    cited = [ref for ref in refs.values() if ref.get("year")]
+    names = {html.escape(author_year(ref), quote=False): str(ref["link"]) for ref in cited}
+    if len(names) != len(cited):
+        raise ValueError("two sources cite the same way; give one a year_suffix")
+    found = re.compile("|".join(re.escape(name) for name in sorted(names, key=len, reverse=True)))
+    pieces, in_link = [], False
+    for piece in PIECES.split(page):
+        if piece.startswith("<"):
+            lower = piece[:3].lower()
+            if lower.startswith("<a ") or lower == "<a>":
+                in_link = True
+            elif lower == "</a":
+                in_link = False
+            pieces.append(piece)
+        elif in_link or not piece:
+            pieces.append(piece)
+        else:
+            pieces.append(found.sub(lambda m: _link(names[m.group(0)], m.group(0)), piece))
+    return "".join(pieces)
 
 
 def with_citations(text: str, refs: Mapping[str, Mapping[str, Any]]) -> str:

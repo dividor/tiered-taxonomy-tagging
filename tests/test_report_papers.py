@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from tiered_taxonomy.report_papers import author_year, cite, cited_methods, with_citations
+from tiered_taxonomy.report_papers import author_year, cite, cited_methods, link_citations, with_citations
 
 REFS = {
     "one": {"title": "Solo", "authors": "Ada Lovelace", "year": 2024},
@@ -49,3 +49,35 @@ def test_cited_methods_writes_out_citations_in_text_fields_only() -> None:
         "differs": "the paper (Kluge and Kähler, 2025)",
         "refs": ["one"],
     }
+
+
+LINKED = {
+    "many": {**REFS["many"], "link": "https://example.org/humbert"},
+    "two": {**REFS["two"], "link": "https://example.org/pair"},
+    "undated": REFS["undated"],
+}
+
+
+def test_link_citations_links_text_but_not_tags_scripts_or_existing_links() -> None:
+    page = (
+        "<p>as shown (Tamagnone et al., 2023)</p>"
+        '<button data-tip="see (Tamagnone et al., 2023)">i</button>'
+        '<script>const s = "Tamagnone et al., 2023";</script>'
+        '<a href="x">Tamagnone et al., 2023</a> and (Kluge and Kähler, 2025)'
+    )
+    linked = link_citations(page, LINKED)
+    link = '<a href="https://example.org/humbert" target="_blank" rel="noopener">'
+    assert f"({link}Tamagnone et al., 2023</a>)" in linked
+    assert 'data-tip="see (Tamagnone et al., 2023)"' in linked
+    assert 'const s = "Tamagnone et al., 2023";' in linked
+    assert '<a href="x">Tamagnone et al., 2023</a>' in linked
+    assert ">Kluge and Kähler, 2025</a>)" in linked
+
+
+def test_link_citations_raises_when_two_sources_cite_the_same_way() -> None:
+    clash = {**LINKED, "again": {**LINKED["many"], "title": "Other", "link": "https://example.org/other"}}
+    with pytest.raises(ValueError, match="year_suffix"):
+        link_citations("<p>x</p>", clash)
+    suffixed = {**clash, "again": {**clash["again"], "year_suffix": "b"}}
+    assert author_year(suffixed["again"]) == "Tamagnone et al., 2023b"
+    assert "Tamagnone et al., 2023b</a>" in link_citations("<p>(Tamagnone et al., 2023b)</p>", suffixed)

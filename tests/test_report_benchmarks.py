@@ -14,11 +14,13 @@ from tiered_taxonomy import report as rp
 from tiered_taxonomy.report_page import (
     as_share,
     build_page,
+    check_v2_macro_lead,
+    eurlex_source,
     exact_lead,
     first_version_line,
     header,
+    humset_source,
     published_measure,
-    v2_leads,
 )
 from tiered_taxonomy.report_papers import Published
 
@@ -65,7 +67,7 @@ def test_humset_v2_rows_come_from_notebook_17_on_the_whole_test_set(inputs: rp.I
     assert full["sizes"]["test"] == inputs.results["13_humbert_reproduction"]["2.0.0"]["run"]["sizes"]["test"]
     assert rp.like_for_like(inputs, "humset") == inputs.results["14_like_for_like"]["humset"]
     (combined,) = [row for row in rows if row.kind == "Combined"]
-    assert combined.sub.endswith("chosen on version 2.0.0's development excerpts")
+    assert combined.sub.endswith(", chosen on development excerpts")
     page = build_page(REPO)
     assert 'data-key="humset_v2|combined"' in page
     assert "Humanitarian excerpts (HumSet 2.0.0)" in page
@@ -158,7 +160,7 @@ def test_tier_one_average_is_the_mean_of_sectors_and_both_pillar_groups() -> Non
 def test_the_benchmark_table_shows_the_papers_own_tier_one_average() -> None:
     page = build_page(REPO)
     assert 'aria-label="What Tier-1 average means"' in page
-    assert 'Its own "Avg" column, 0.73, is the tier-1' in page.replace("\n  ", " ")
+    assert 'Its own "Avg" column is the tier-1 average in the table' in " ".join(page.split())
 
 
 def test_check_findings_raises_when_the_combined_tier_one_average_is_not_above_the_papers(
@@ -199,32 +201,30 @@ def test_results_table_needs_what_the_paper_printed_for_a_macro_f1_column() -> N
 
 
 def test_the_page_cites_each_benchmark_paper_where_it_names_it() -> None:
-    page = re.sub(r"\s+", " ", build_page(REPO))
+    page = re.sub(r"<a [^>]*>|</a>", "", re.sub(r"\s+", " ", build_page(REPO)))
     assert "published BERT benchmark (Chalkidis et al., 2021)" in page
     assert "the HumBERT paper (Tamagnone et al., 2023) reports" in page
     assert "arXiv 2305.16756" not in page
     assert "{cite:" not in page
 
 
-def test_v2_leads_names_a_single_model_ahead_by_exact_labels_and_says_the_gap_is_untested() -> None:
+def test_check_v2_macro_lead_raises_unless_the_combined_method_leads_by_macro_f1() -> None:
     xr = row(key="xr", name="XR-Transformer", scores={"exact": {"f1": 0.72}}, paper={"Mean": 0.51})
     combined = row(key="c", kind="Combined", scores={"exact": {"f1": 0.71}}, paper={"Mean": 0.66})
-    note = v2_leads([xr, combined])
-    assert "the XR-Transformer has the top score, 0.720, against the combined method's 0.710" in note
-    assert "by macro F1 the combined method leads, 0.660 against 0.510" in note
-    assert "We have not tested whether the exact-labels gap is larger than chance" in note
-    assert "top score by exact labels and by macro F1" in v2_leads(
-        [replace(combined, scores={"exact": {"f1": 0.73}}), xr]
-    )
+    check_v2_macro_lead([xr, combined])
     with pytest.raises(ValueError, match="leads by macro F1"):
-        v2_leads([xr, replace(combined, paper={"Mean": 0.5})])
+        check_v2_macro_lead([xr, replace(combined, paper={"Mean": 0.5})])
     with pytest.raises(ValueError, match="xr has no macro F1"):
-        v2_leads([replace(xr, paper=None), combined])
+        check_v2_macro_lead([replace(xr, paper=None), combined])
 
 
-def test_the_v2_table_says_which_method_leads_by_each_measure(inputs: rp.Inputs) -> None:
-    rows = rp.method_rows(inputs, rp.HUMSET_V2)
-    assert v2_leads(rows) in build_page(REPO)
+def test_the_v2_table_has_no_note_repeating_its_scores(inputs: rp.Inputs) -> None:
+    page = build_page(REPO)
+    assert (
+        "has the top score"
+        not in page[page.index("Humanitarian excerpts (HumSet 2.0.0)") :].split("<section")[0]
+    )
+    assert "On that average the combined method scores" not in page
 
 
 def published_stub(row_key: str) -> Published:
@@ -357,3 +357,16 @@ def test_the_humset_1_line_gives_its_scores_and_raises_if_the_combined_method_di
     )
     with pytest.raises(ValueError, match=re.escape("on HumSet 1.0.0")):
         first_version_line(inputs, v1[1:])
+
+
+def test_each_dataset_section_links_its_sources_and_says_who_labelled_it() -> None:
+    laws = eurlex_source("(Chalkidis et al., 2021)")
+    assert 'href="https://huggingface.co/datasets/coastalcph/multi_eurlex"' in laws
+    assert 'href="https://op.europa.eu/en/web/eu-vocabularies/eurovoc"' in laws
+    assert "The EU Publications Office tagged each law" in " ".join(laws.split())
+    excerpts = " ".join(humset_source("(Fekih et al., 2022)").split())
+    assert 'href="https://huggingface.co/datasets/nlp-thedeep/humset"' in excerpts
+    assert 'href="https://blog.thedeep.io/humset/"' in excerpts
+    assert "it is not a standard published on its own" in excerpts
+    page = " ".join(build_page(REPO).split())
+    assert page.count("<strong>Where the labels come from.</strong>") == 2

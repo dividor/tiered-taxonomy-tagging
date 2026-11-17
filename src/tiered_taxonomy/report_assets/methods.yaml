@@ -439,6 +439,7 @@ references:
   slkr:
     authors: Daoping Wu, Dong Wang, Siyu Liu and others
     year: 2026
+    year_suffix: a
     title: Label-Centric Knowledge Retrieval for Zero-Shot Text Classification
     where: arXiv preprint
     link: https://arxiv.org/abs/2610.16182
@@ -470,6 +471,7 @@ references:
   tef:
     authors: Yuhe Wu, Rui Qian, Guangyu Wang and others
     year: 2026
+    year_suffix: b
     title: 'Count Evidence, Not Sentences: Tempered Evidence Fusion of LLM Judgments for Long-Text Value Measurement'
     where: arXiv preprint
     link: https://arxiv.org/abs/2609.27165

@@ -12,6 +12,8 @@ import requests
 from tiered_taxonomy.taxonomy import Node, Taxonomy
 
 ENDPOINT = "https://publications.europa.eu/webapi/rdf/sparql"
+# EuroVoc's home page at the EU Publications Office, for readers.
+PAGE = "https://op.europa.eu/en/web/eu-vocabularies/eurovoc"
 SCHEME = "http://eurovoc.europa.eu/100141"
 _PREFIX = "PREFIX skos:<http://www.w3.org/2004/02/skos/core#> "
 # Concept to its broader concept, within the thesaurus.
