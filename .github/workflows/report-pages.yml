@@ -1,0 +1,44 @@
+name: Publish the report
+
+# Publishes outputs/report/index.html with GitHub Pages whenever it changes on main. It is skipped while the
+# repository is private.
+on:
+  push:
+    branches: [ main ]
+    paths: [ "outputs/report/**" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    if: github.event.repository.visibility == 'public'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Pages
+        uses: actions/configure-pages@v6
+        with:
+          enablement: true
+
+      - name: Upload the report
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: outputs/report
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v5

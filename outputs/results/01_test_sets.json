@@ -1,0 +1,56 @@
+{
+  "eurlex_lengths": {
+    "at_least_20000": 63,
+    "at_least_5000": 370,
+    "median_words": 509,
+    "test_documents": 5000
+  },
+  "eurovoc_agreement": {
+    "level_1": 0.994,
+    "level_2": 0.848,
+    "level_3": 0.724,
+    "test_labels_missing_from_tree": 7
+  },
+  "humset": {
+    "entries_with_no_label": 0.046,
+    "lowest_share": 0.226,
+    "median_share_of_labels_a_project_ever_used": 0.548,
+    "projects": 46,
+    "projects_using_every_label": 0,
+    "test_documents_in_train": 0
+  },
+  "sizes": [
+    {
+      "dev": 5000,
+      "mean gold labels": 6.22,
+      "nodes": 7372,
+      "nodes with 2+ parents": 244,
+      "test": 5000,
+      "test set": "eurlex",
+      "tier sizes": {
+        "1": 21,
+        "2": 127,
+        "3": 545,
+        "4": 4013,
+        "5": 2173,
+        "6": 447,
+        "7": 40,
+        "8": 6
+      },
+      "train": 55000
+    },
+    {
+      "dev": 16039,
+      "mean gold labels": 2.34,
+      "nodes": 75,
+      "nodes with 2+ parents": 0,
+      "test": 15147,
+      "test set": "humset",
+      "tier sizes": {
+        "1": 24,
+        "2": 51
+      },
+      "train": 117435
+    }
+  ]
+}

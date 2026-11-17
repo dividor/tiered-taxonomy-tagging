@@ -1,0 +1,118 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+# The workflow token only reads the repository; jobs that need more ask for it themselves.
+permissions:
+  contents: read
+
+jobs:
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install the project
+        run: uv sync --locked
+
+      - name: Run pre-commit hooks
+        run: uv run pre-commit run --all-files --show-diff-on-failure
+
+  tests:
+    runs-on: ubuntu-latest
+    needs: code-quality
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install the project
+        run: uv sync --locked
+
+      - name: Run unit tests
+        run: uv run pytest -q
+
+      # The report is built from the committed results alone, so it must come out byte for byte the same.
+      - name: Check the report matches the committed results
+        run: |
+          uv run python scripts/make_report.py
+          git diff --exit-code outputs/report/index.html
+
+  security-scan:
+    runs-on: ubuntu-latest
+    needs: code-quality
+    permissions:
+      contents: read
+      # Gitleaks lists a pull request's commits through the API.
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      # Python dependency vulnerability scanning
+      - name: Run pip-audit
+        run: |
+          uv export --frozen --no-dev --no-emit-project --format requirements-txt --no-hashes > requirements-audit.txt
+          uvx pip-audit -r requirements-audit.txt --desc on
+
+      # Python SAST with Bandit (MEDIUM and HIGH severity fail the job)
+      - name: Run Bandit
+        run: uvx bandit -r -ll src scripts
+
+      # Secret scanning across the whole history
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_CONFIG: .gitleaks.toml
+
+  sbom:
+    runs-on: ubuntu-latest
+    needs: security-scan
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      # A CycloneDX bill of materials of the locked dependencies, kept with the run.
+      - name: Generate the SBOM
+        run: |
+          uv export --frozen --no-dev --no-emit-project --format requirements-txt --no-hashes > requirements-sbom.txt
+          uvx --from cyclonedx-bom cyclonedx-py requirements requirements-sbom.txt -o sbom-python.json \
+            --output-format JSON
+
+      - name: Upload the SBOM
+        uses: actions/upload-artifact@v7
+        with:
+          name: sbom
+          path: sbom-python.json

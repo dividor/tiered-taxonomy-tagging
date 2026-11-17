@@ -1,0 +1,227 @@
+{
+  "average_reproduces_printed": {
+    "macro": false,
+    "micro": false,
+    "sample": false,
+    "weighted": false
+  },
+  "averages": {
+    "macro": {
+      "Pillars 1D": 0.542,
+      "Pillars 2D": 0.644,
+      "Sectors": 0.742,
+      "Subpillars 1D": 0.453,
+      "Subpillars 2D": 0.476
+    },
+    "micro": {
+      "Pillars 1D": 0.579,
+      "Pillars 2D": 0.677,
+      "Sectors": 0.753,
+      "Subpillars 1D": 0.455,
+      "Subpillars 2D": 0.567
+    },
+    "printed": {
+      "Pillars 1D": 0.7,
+      "Pillars 2D": 0.71,
+      "Sectors": 0.78,
+      "Subpillars 1D": 0.54,
+      "Subpillars 2D": 0.51
+    },
+    "sample": {
+      "Pillars 1D": 0.609,
+      "Pillars 2D": 0.729,
+      "Sectors": 0.792,
+      "Subpillars 1D": 0.524,
+      "Subpillars 2D": 0.598
+    },
+    "weighted": {
+      "Pillars 1D": 0.592,
+      "Pillars 2D": 0.678,
+      "Sectors": 0.753,
+      "Subpillars 1D": 0.536,
+      "Subpillars 2D": 0.577
+    }
+  },
+  "diagnosis": {
+    "eurlex": {
+      "errors": {
+        "missed": {
+          "parent or child": 0.09349112426035502,
+          "sibling": 0.0777120315581854,
+          "unrelated": 0.8287968441814596
+        },
+        "wrong": {
+          "parent or child": 0.2763385146804836,
+          "sibling": 0.14075993091537134,
+          "unrelated": 0.582901554404145
+        }
+      },
+      "gold labels per item": 6.5183333333333335,
+      "identical texts": {
+        "f1 between them": 0.15950920245398775,
+        "fully agreeing": 0.0625,
+        "pairs": 16.0
+      },
+      "items": {
+        "all right": 0.0016666666666666668,
+        "at least one right": 0.825
+      },
+      "model": "omikuji",
+      "nearest training text": {
+        "0.80 to 0.90": {
+          "f1 between them": 0.43809726056487575,
+          "pairs": 1530.0
+        },
+        "0.90 to 0.95": {
+          "f1 between them": 0.5770761839396019,
+          "pairs": 612.0
+        },
+        "0.95 to 0.99": {
+          "f1 between them": 0.5,
+          "pairs": 19.0
+        }
+      },
+      "predicted per item": 4.223333333333334
+    },
+    "humset": {
+      "errors": {
+        "missed": {
+          "sibling": 0.15123456790123457,
+          "unrelated": 0.8487654320987654
+        },
+        "wrong": {
+          "sibling": 0.1385390428211587,
+          "unrelated": 0.8614609571788413
+        }
+      },
+      "gold labels per item": 2.3526666666666665,
+      "identical texts": {
+        "f1 between them": 0.8313253012048193,
+        "fully agreeing": 0.48148148148148145,
+        "pairs": 27.0
+      },
+      "items": {
+        "all right": 0.262,
+        "at least one right": 0.856
+      },
+      "model": "xr_transformer",
+      "nearest training text": {
+        "0.80 to 0.90": {
+          "f1 between them": 0.5795116140559857,
+          "pairs": 619.0
+        },
+        "0.90 to 0.95": {
+          "f1 between them": 0.7327478042659975,
+          "pairs": 167.0
+        },
+        "0.95 to 0.99": {
+          "f1 between them": 0.7744807121661722,
+          "pairs": 143.0
+        },
+        "0.99 to 1.01": {
+          "f1 between them": 0.7828571428571429,
+          "pairs": 73.0
+        }
+      },
+      "predicted per item": 2.2826666666666666
+    }
+  },
+  "drift": {
+    "at random, training laws only": 58.31,
+    "at random, with half of development laws": 69.71,
+    "by date, training laws only": 52.7,
+    "by date, with earlier development laws": 56.57
+  },
+  "eurlex_mrp": {
+    "BERT (printed)": {
+      "all": 48.4,
+      "level_3": 67.7
+    },
+    "embedding_classifier": {
+      "all": 45.85,
+      "level_3": 65.41
+    },
+    "knn": {
+      "all": 42.44,
+      "level_3": 59.98
+    },
+    "label_search": {
+      "all": 13.94,
+      "level_3": 26.84
+    },
+    "omikuji": {
+      "all": 47.07,
+      "level_3": 65.02
+    },
+    "xr_transformer": {
+      "all": 47.43,
+      "level_3": 66.91
+    }
+  },
+  "humset_macro": {
+    "embedding_classifier": {
+      "Mean": 0.496,
+      "Pillars 1D": 0.462,
+      "Pillars 2D": 0.568,
+      "Sectors": 0.674,
+      "Subpillars 1D": 0.381,
+      "Subpillars 2D": 0.392
+    },
+    "knn": {
+      "Mean": 0.478,
+      "Pillars 1D": 0.437,
+      "Pillars 2D": 0.546,
+      "Sectors": 0.656,
+      "Subpillars 1D": 0.366,
+      "Subpillars 2D": 0.384
+    },
+    "label_search": {
+      "Mean": 0.237,
+      "Pillars 1D": 0.171,
+      "Pillars 2D": 0.322,
+      "Sectors": 0.44,
+      "Subpillars 1D": 0.111,
+      "Subpillars 2D": 0.142
+    },
+    "omikuji": {
+      "Mean": 0.49,
+      "Pillars 1D": 0.454,
+      "Pillars 2D": 0.544,
+      "Sectors": 0.685,
+      "Subpillars 1D": 0.392,
+      "Subpillars 2D": 0.376
+    },
+    "xr_transformer": {
+      "Mean": 0.55,
+      "Pillars 1D": 0.519,
+      "Pillars 2D": 0.617,
+      "Sectors": 0.731,
+      "Subpillars 1D": 0.437,
+      "Subpillars 2D": 0.444
+    }
+  },
+  "printed": {
+    "eurlex": {
+      "all": 48.4,
+      "level_3": 67.7
+    },
+    "humset": {
+      "HumBERT, best": {
+        "Mean": 0.648,
+        "Pillars 1D": 0.7,
+        "Pillars 2D": 0.71,
+        "Sectors": 0.78,
+        "Subpillars 1D": 0.54,
+        "Subpillars 2D": 0.51
+      },
+      "HumSet paper, XLM-R": {
+        "Mean": 0.534,
+        "Pillars 1D": 0.53,
+        "Pillars 2D": 0.63,
+        "Sectors": 0.73,
+        "Subpillars 1D": 0.38,
+        "Subpillars 2D": 0.4
+      }
+    }
+  }
+}

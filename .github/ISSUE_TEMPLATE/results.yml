@@ -1,0 +1,31 @@
+name: Results differ from the report
+description: Your rerun gave different numbers, or the report would not build from your results
+title: "[Results]: "
+labels: ["results", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Some drift is expected: LLM providers change, EuroVoc's tree is downloaded live, and a few training steps
+        are not exactly repeatable. Tell us how large the difference is and where it starts.
+
+  - type: textarea
+    id: where
+    attributes:
+      label: Where the numbers differ
+      description: The notebook, the method and the measure, with your number and the report's.
+    validations:
+      required: true
+
+  - type: textarea
+    id: check
+    attributes:
+      label: Message from the report build, if any
+      description: "`scripts/make_report.py` stops if a finding no longer holds; paste what it printed."
+      render: shell
+
+  - type: textarea
+    id: setup
+    attributes:
+      label: What you changed
+      placeholder: Models in configs/experiment.yaml, sample sizes, hardware, anything else.

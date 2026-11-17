@@ -1,0 +1,115 @@
+{
+  "1.0.0": {
+    "every_label_once": {
+      "Mean": 0.5595005668376513,
+      "Pillars 1D": 0.531886313061684,
+      "Pillars 2D": 0.6399082709582816,
+      "Sectors": 0.7342856756858154,
+      "Subpillars 1D": 0.428206598560913,
+      "Subpillars 2D": 0.46321597592156255
+    },
+    "paper_averages": {
+      "Mean": 0.546719226580713,
+      "Pillars 1D": 0.531886313061684,
+      "Pillars 2D": 0.6399082709582816,
+      "Sectors": 0.7342856756858154,
+      "Subpillars 1D": 0.3814801469093596,
+      "Subpillars 2D": 0.4460357262884247
+    },
+    "run": {
+      "device": "NVIDIA A10G",
+      "hours": 1.086,
+      "sample": false,
+      "seed": 7,
+      "settings": {
+        "architecture_setup": "multiabel_architecture",
+        "backbone_name": "nlp-thedeep/humbert",
+        "dropout": 0.2,
+        "learning_rate": 3e-05,
+        "loss_gamma": 1,
+        "max_len": 200,
+        "n_epochs": 3,
+        "n_freezed_layers": 1,
+        "proportions_pow": 0.5,
+        "train_batch_size": 8,
+        "val_batch_size": 16,
+        "weight_decay": 0.01
+      },
+      "sizes": {
+        "test": 15147,
+        "train": 117435,
+        "validation": 16039
+      },
+      "version": "1.0.0"
+    },
+    "trainer_table": {
+      "Avg": 0.637,
+      "Mean": 0.5472,
+      "Pillars 1D": 0.533,
+      "Pillars 2D": 0.642,
+      "Sectors": 0.734,
+      "Subpillars 1D": 0.38,
+      "Subpillars 2D": 0.447
+    }
+  },
+  "2.0.0": {
+    "every_label_once": {
+      "Mean": 0.6432861246139091,
+      "Pillars 1D": 0.6848320082100148,
+      "Pillars 2D": 0.7050200285106564,
+      "Sectors": 0.7775383936115478,
+      "Subpillars 1D": 0.5478056259616386,
+      "Subpillars 2D": 0.5012345667756882
+    },
+    "matches_printed": {
+      "Pillars 1D": true,
+      "Pillars 2D": true,
+      "Sectors": true,
+      "Subpillars 1D": false,
+      "Subpillars 2D": true
+    },
+    "paper_averages": {
+      "Mean": 0.6304758835345964,
+      "Pillars 1D": 0.6848320082100148,
+      "Pillars 2D": 0.7050200285106564,
+      "Sectors": 0.7775383936115478,
+      "Subpillars 1D": 0.4979854655417065,
+      "Subpillars 2D": 0.4870035217990564
+    },
+    "reproduces": false,
+    "run": {
+      "device": "NVIDIA A10G",
+      "hours": 1.13,
+      "sample": false,
+      "seed": 7,
+      "settings": {
+        "architecture_setup": "multiabel_architecture",
+        "backbone_name": "nlp-thedeep/humbert",
+        "dropout": 0.2,
+        "learning_rate": 3e-05,
+        "loss_gamma": 1,
+        "max_len": 200,
+        "n_epochs": 3,
+        "n_freezed_layers": 1,
+        "proportions_pow": 0.5,
+        "train_batch_size": 8,
+        "val_batch_size": 16,
+        "weight_decay": 0.01
+      },
+      "sizes": {
+        "test": 12896,
+        "train": 129268,
+        "validation": 11940
+      }
+    },
+    "trainer_table": {
+      "Avg": 0.724,
+      "Mean": 0.631,
+      "Pillars 1D": 0.688,
+      "Pillars 2D": 0.704,
+      "Sectors": 0.779,
+      "Subpillars 1D": 0.499,
+      "Subpillars 2D": 0.485
+    }
+  }
+}

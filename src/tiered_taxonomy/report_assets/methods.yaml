@@ -1,0 +1,561 @@
+# What the results report says about each method: its description, its kind and its sources.
+# Paper details were checked against arXiv and the ACL Anthology on 10 November 2026. `differs` says how
+# ours differs from its source, so that the report never presents a reduced method as the original.
+kinds:
+- kind: LLM
+  css: k-llm
+  meaning: Prompts a general-purpose LLM. Needs no labelled documents.
+- kind: LLM + examples
+  css: k-mix
+  meaning: Prompts an LLM and shows it labelled training documents.
+- kind: LLM + trained model
+  css: k-mix
+  meaning: An LLM chooses from a shortlist that a trained model helped make.
+- kind: No training
+  css: k-none
+  meaning: Embedding search only. Needs no labelled documents and no LLM.
+- kind: Trained
+  css: k-trained
+  meaning: Learns from the dataset's labelled documents. Trains on a laptop, except XR-Transformer.
+- kind: Fine-tuned
+  css: k-tuned
+  meaning: A pretrained neural model further trained on the dataset, on a rented GPU.
+- kind: Combined
+  css: k-comb
+  meaning: Our method. Several trained models each suggest labels, and a scorer trained on documents they never saw decides which to keep. Which models it draws on is chosen for each dataset.
+methods:
+  pipeline:
+    name: LLM keyword pipeline
+    sub: LLMs write keywords; keywords are matched to labels
+    kind: LLM
+    needs_labels: false
+    summary: Two LLMs suggest keywords; each keyword is matched to labels, then rated.
+    steps:
+    - Text
+    - 2 LLMs write keywords
+    - Match keywords to labels
+    - LLM rates each label
+    - Labels
+    differs: Two LLMs and one prompt; the paper {cite:kluge2025} uses several of each.
+    refs:
+    - kluge2025
+    - kahler2026
+    notebook: '04'
+  select_all:
+    name: LLM chooses from the full list
+    sub: the LLM sees every label at once
+    kind: LLM
+    needs_labels: false
+    summary: The LLM sees every HumSet label at once and picks the ones that fit.
+    steps:
+    - Excerpt and every label
+    - LLM picks
+    - Labels
+    differs: Our own baseline. It only works for a small taxonomy.
+    refs: []
+    notebook: '04'
+  funnel_names:
+    name: Search label names, then LLM chooses
+    sub: an LLM picks from the 100 closest labels
+    kind: LLM
+    needs_labels: false
+    summary: Search finds the 100 closest label names; the LLM picks from them.
+    steps:
+    - Text
+    - 'Search: 100 closest names'
+    - LLM picks
+    - Labels
+    differs: One view of the text and no pruning by tier; MATCH uses eight views and prunes.
+    refs:
+    - match
+    notebook: '05'
+  funnel_cards:
+    name: Search label definitions, then LLM chooses
+    sub: as above, matching written definitions
+    kind: LLM
+    needs_labels: false
+    summary: As above, but labels are found and shown through short written definitions.
+    steps:
+    - Text
+    - 'Search: 100 closest definitions'
+    - LLM picks
+    - Labels
+    differs: An LLM wrote the definitions once, from the taxonomy alone.
+    refs:
+    - match
+    - slkr
+    notebook: '05'
+  funnel_hybrid:
+    name: Trained model and search, then LLM chooses
+    sub: shortlist from both
+    kind: LLM + trained model
+    needs_labels: true
+    summary: The shortlist mixes a trained model's top labels with search results.
+    steps:
+    - Text
+    - 'Trained model and search: about 96 labels'
+    - LLM picks
+    - Labels
+    differs: Our own variant, run on the laws only.
+    refs:
+    - match
+    notebook: '05'
+  funnel_cards_checked:
+    name: Search definitions, LLM chooses and double-checks
+    sub: a second call checks each label
+    kind: LLM
+    needs_labels: false
+    summary: After picking, a second LLM call keeps only labels it can back with a quote.
+    steps:
+    - Text
+    - Search, then LLM picks
+    - LLM checks each label with a quote
+    - Labels
+    differs: Checks against LLM-written definitions; the paper {cite:cti2ttp} uses its field's official ones.
+    refs:
+    - cti2ttp
+    notebook: '07'
+  funnel_cards_quote_filter:
+    name: Search definitions, LLM chooses, keep quoted labels
+    sub: no extra call
+    kind: LLM
+    needs_labels: false
+    summary: Keeps only picked labels whose supporting quote really is in the text.
+    steps:
+    - Text
+    - Search, then LLM picks with quotes
+    - Drop labels without a real quote
+    - Labels
+    differs: ''
+    refs:
+    - cti2ttp
+    notebook: '07'
+  walk_strict:
+    name: Tree walk, one branch
+    sub: top-down, one path
+    kind: LLM
+    needs_labels: false
+    summary: Walks down the taxonomy from the top, following a single branch.
+    steps:
+    - Top of the taxonomy
+    - LLM picks one child
+    - Repeat at each level
+    - Label
+    differs: Plain top-down routing, used as the point of comparison.
+    refs: []
+    notebook: '06'
+  walk_branching:
+    name: Tree walk, three branches
+    sub: top-down, several paths
+    kind: LLM
+    needs_labels: false
+    summary: Walks down from the top, keeping up to three branches open.
+    steps:
+    - Top of the taxonomy
+    - LLM picks up to three
+    - Repeat at each level
+    - Labels
+    differs: The paper {cite:gcp} trains its walk; ours prompts an LLM.
+    refs:
+    - gcp
+    notebook: '06'
+  walk_anchored:
+    name: Tree walk from search results
+    sub: starts lower, looks ahead
+    kind: LLM
+    needs_labels: false
+    summary: Starts from labels found by search, and looks ahead before each choice.
+    steps:
+    - 'Search: 8 starting labels'
+    - LLM sees what lies below
+    - Picks and moves down
+    - Labels
+    differs: Leaves out the backtracking with tools in the papers {cite:cas,toticd}.
+    refs:
+    - cas
+    - toticd
+    notebook: '06'
+  ki_fsprompt:
+    name: KI-FSPrompt
+    sub: LLM shown similar labelled documents
+    kind: LLM + examples
+    needs_labels: true
+    summary: The LLM sees similar labelled documents before it writes keywords.
+    steps:
+    - Text
+    - Find similar training documents
+    - LLM writes keywords
+    - Match and rate
+    - Labels
+    differs: Open LLMs stand in for the paper's {cite:kahler2025}; examples come from our training data.
+    refs:
+    - kahler2025
+    - kahler2026
+    notebook: '11'
+  llm_ensemble:
+    name: LLM-Ensemble
+    sub: five LLMs write keywords, one rates them
+    kind: LLM
+    needs_labels: false
+    summary: Five LLMs write keywords; a sixth rates the labels they match.
+    steps:
+    - Text
+    - 5 LLMs write keywords
+    - Match to labels
+    - Llama-3.1-8B rates
+    - Labels
+    differs: Five LLMs fixed in advance; the paper {cite:kluge2025} chose its set from 135 combinations.
+    refs:
+    - kluge2025
+    - kahler2026
+    notebook: '11'
+  omikuji:
+    name: Omikuji
+    sub: word counts, label trees
+    kind: Trained
+    needs_labels: true
+    summary: A fast classifier on word counts, built for very large label sets.
+    steps:
+    - First 500 words
+    - Word counts
+    - Omikuji label trees
+    - Labels
+    differs: Trains on a laptop in minutes.
+    refs:
+    - omikuji
+    notebook: '10'
+  xr_transformer:
+    name: XR-Transformer
+    sub: the leading trained model in a 2026 benchmark {cite:kahler2026}
+    kind: Trained
+    needs_labels: true
+    summary: A BERT model fine-tuned with word counts, over groups of labels.
+    steps:
+    - First 30,000 characters
+    - BERT and word counts
+    - Label groups, then labels
+    - Labels
+    differs: The benchmark paper {cite:kahler2026} names no base model; we used BERT and multilingual BERT.
+    refs:
+    - xr
+    - kahler2026
+    - pecos
+    notebook: '10'
+  embedding_classifier:
+    name: Embedding classifier
+    sub: BGE-M3 embeddings, one output per label
+    kind: Trained
+    needs_labels: true
+    summary: A simple classifier on a meaning-based embedding of the text.
+    steps:
+    - First 500 words
+    - BGE-M3 embedding
+    - One output per label
+    - Labels
+    differs: Our own baseline.
+    refs:
+    - bgem3
+    notebook: '10'
+  knn:
+    name: Similar documents
+    sub: labels of the closest training documents
+    kind: Trained
+    needs_labels: true
+    summary: Gives the text the labels of the most similar training documents.
+    steps:
+    - Text
+    - BGE-M3 embedding
+    - Nearest training documents
+    - Their labels
+    differs: Our own baseline.
+    refs:
+    - bgem3
+    notebook: '10'
+  label_search:
+    name: Label search
+    sub: closest label names, no training
+    kind: No training
+    needs_labels: false
+    summary: Returns the labels whose names are closest in meaning to the text.
+    steps:
+    - Text
+    - BGE-M3 embedding
+    - Nearest label names
+    - Labels
+    differs: Needs no labelled documents and no LLM.
+    refs:
+    - bgem3
+    notebook: '10'
+  classifier:
+    name: Fine-tuned classifier
+    name_by_dataset:
+      eurlex: Fine-tuned Legal-BERT
+      humset: Fine-tuned HumBERT
+      humset_v2: Fine-tuned HumBERT
+    sub: a BERT-style model with one output per label
+    kind: Fine-tuned
+    needs_labels: true
+    summary: A BERT model fine-tuned with one output per label, as in the benchmarks.
+    steps:
+    - Text
+    - Legal-BERT or HumBERT
+    - One output per label
+    - Labels
+    differs: A plainer fine-tune than HumBERT's authors used, with one shared head and ordinary loss. On HumSet
+      it scores level with the authors' own recipe rerun on the same test set (mean macro F1 0.56 for both).
+    refs:
+    - humbert
+    - legalbert
+    - multieurlex
+    notebook: '14'
+  humbert_recipe:
+    name: Authors' HumBERT recipe
+    sub: the paper's own trainer and settings, rerun {cite:humbert}
+    kind: Fine-tuned
+    needs_labels: true
+    summary: HumBERT fine-tuned with its authors' own code and settings, rerun here on our data.
+    steps:
+    - Text
+    - HumBERT
+    - One copy of its top layer per category
+    - Labels
+    differs: Their trainer, unchanged, with the paper's settings {cite:humbert}. One run, one seed. The paper
+      reports macro F1 on all of HumSet 2.0.0's test excerpts. There the rerun comes within 0.015 of every
+      printed group if every label is averaged once, and falls short by the trainer's own averaging, which
+      averages subpillars within each pillar first (notebook 13). The 2.0.0 table scores it on the same test
+      excerpts, with its cut-offs chosen as for every other method there; the 1.0.0 table, on 1,500 sampled
+      test excerpts. The note under its macro F1 says what the paper reported and how the measurements differ.
+    refs:
+    - humbert
+    - classifier_trainer
+    notebook: '18'
+  llm:
+    name: Fine-tuned small LLM
+    sub: Qwen2.5-7B, used as a classifier
+    kind: Fine-tuned
+    needs_labels: true
+    summary: A 7-billion-parameter LLM fine-tuned to score every label.
+    steps:
+    - Text
+    - Qwen2.5-7B, LoRA-tuned
+    - One score per label
+    - Labels
+    differs: One branch of DualMLC, where the paper {cite:dualmlc} fuses two.
+    refs:
+    - dualmlc
+    - qwen
+    - lora
+    notebook: '14'
+  reranker:
+    name: Fine-tuned reranker
+    sub: reads text and label together
+    kind: Fine-tuned
+    needs_labels: true
+    summary: Reads the text and one label together and scores how well they fit.
+    steps:
+    - Shortlist from trained models
+    - Read text and label together
+    - Score each pair
+    - Labels
+    differs: The laws run stopped at its 4-hour limit, after one pass.
+    refs:
+    - bgereranker
+    notebook: '14'
+  gliner:
+    name: GLiNER2.5
+    sub: reads text and label names together
+    kind: Fine-tuned
+    needs_labels: true
+    summary: Reads the text with all label names at once and scores each label.
+    steps:
+    - Text and label names
+    - GLiNER2.5
+    - A score per label
+    - Labels
+    differs: Fine-tuned on each dataset; untuned, it scored far lower.
+    refs:
+    - gliner
+    notebook: '15'
+  combined:
+    name: Combined method
+    sub: ''
+    kind: Combined
+    needs_labels: true
+    summary: Gathers clues about every label the models suggest, and a trained scorer decides which to keep.
+    steps:
+    - Each model's top 30 labels
+    - Gather clues for each label
+    - A trained scorer weighs the clues
+    - Labels above a cut-off
+    clues_intro: 'For every candidate label, the scorer looks at:'
+    clues:
+    - clue: Model scores
+      meaning: How strongly each model suggests the label, and how many models suggest it.
+    - clue: Name in the text
+      meaning: Whether the label's name appears word for word in the document.
+    - clue: How common it is
+      meaning: How often the label was used in the training documents.
+    - clue: Its tier
+      meaning: How broad or specific the label is in the taxonomy.
+    - clue: Its family
+      meaning: How strongly the models suggest the label's parent and its children.
+    - clue: Its usual companions
+      meaning: How strongly the models suggest labels that often appear with it in training.
+    - clue: Its recent history
+      meaning: How often it was used in the 5,000 most recent training laws, whether that is rising, and how long
+        since it was last used.
+      only_with_priors: true
+    scorer: 'The scorer is a gradient-boosted model: many small decision trees added together. It learned how much
+      to trust each clue from development documents that none of the models had trained on.'
+    differs: Our own method. Its second attempt on the laws adds each label's recent history.
+    refs: []
+    notebook: 14 and 15
+references:
+  kahler2026:
+    authors: Maximilian Kähler, Katja Konermann, Lisa Kluge and Markus Schumacher
+    year: 2026
+    title: Does generative AI supersede supervised XMLC? A Benchmark Study on Automated Subject Indexing with German
+      Scientific Literature
+    where: arXiv preprint
+    link: https://arxiv.org/abs/2607.14882
+  kluge2025:
+    authors: Lisa Kluge and Maximilian Kähler
+    year: 2025
+    title: 'DNB-AI-Project at SemEval-2025 Task 5: An LLM-Ensemble Approach for Automated Subject Indexing'
+    where: SemEval-2025
+    link: https://aclanthology.org/2025.semeval-1.148/
+  kahler2025:
+    authors: Maximilian Kähler, Lisa Kluge and Katja Konermann
+    year: 2025
+    title: 'DNB-AI-Project at the GermEval-2025 LLMs4Subjects Task: KIFSPrompt – Knowledge-Injected Few-Shot Prompting'
+    where: KONVENS 2025 Workshops
+    link: https://aclanthology.org/2025.konvens-2.42/
+  match:
+    authors: Daniele Raimondi, Feichi Lu, Oliver Grun, Mariia Eremina and Andrea Perlato
+    year: 2026
+    title: 'MATCH: Multi-stage Article Tagging to Concept Hierarchies'
+    where: arXiv preprint
+    link: https://arxiv.org/abs/2610.25948
+  slkr:
+    authors: Daoping Wu, Dong Wang, Siyu Liu and others
+    year: 2026
+    title: Label-Centric Knowledge Retrieval for Zero-Shot Text Classification
+    where: arXiv preprint
+    link: https://arxiv.org/abs/2610.16182
+  cti2ttp:
+    authors: Yutong Cheng, Changze Li, Raihan Sultan Pasha Basuki and others
+    year: 2026
+    title: 'CTI2TTP: Evidence-Grounded TTP Extraction from Cyber Threat Intelligence via Diverge-then-Converge Verification'
+    where: arXiv preprint
+    link: https://arxiv.org/abs/2605.25836
+  gcp:
+    authors: Amritpal Singh, Sebastian Torres, Khawar Shakeel and Syed Ahmad Chan Bukhari
+    year: 2026
+    title: Graph-Constrained Policy Learning for Extreme Clinical Code Prediction
+    where: arXiv preprint
+    link: https://arxiv.org/abs/2607.11954
+  cas:
+    authors: Siyu Wang, Wei Tan and Lulu Chen
+    year: 2026
+    title: Constraint-Aware Hierarchical Search for Regulation-Driven Fine-Grained Classification
+    where: arXiv preprint
+    link: https://arxiv.org/abs/2607.10588
+  toticd:
+    authors: Xinjie Xu, Yongqi Fan, Shuang-shuang Chen and others
+    year: 2026
+    title: 'Travel on the ICD Tree: Benchmarking Agentic Reasoning for ICD Coding from Chinese Electronic Medical
+      Records'
+    where: Findings of ACL 2026
+    link: https://aclanthology.org/2026.findings-acl.191/
+  tef:
+    authors: Yuhe Wu, Rui Qian, Guangyu Wang and others
+    year: 2026
+    title: 'Count Evidence, Not Sentences: Tempered Evidence Fusion of LLM Judgments for Long-Text Value Measurement'
+    where: arXiv preprint
+    link: https://arxiv.org/abs/2609.27165
+  xr:
+    authors: Jiong Zhang, Wei-cheng Chang, Hsiang-fu Yu and Inderjit S. Dhillon
+    year: 2021
+    title: Fast Multi-Resolution Transformer Fine-tuning for Extreme Multi-label Text Classification
+    where: arXiv preprint
+    link: https://arxiv.org/abs/2110.00685
+  humbert:
+    authors: Nicolò Tamagnone, Selim Fekih, Ximena Contla, Nayid Orozco and Navid Rekabsaz
+    year: 2023
+    title: Leveraging Domain Knowledge for Inclusive and Bias-aware Humanitarian Response Entry Classification
+    where: IJCAI 2023
+    link: https://arxiv.org/abs/2305.16756
+  classifier_trainer:
+    authors: Data Friendly Space, the team behind DEEP
+    year: 2023
+    title: classifier-trainer, the trainer behind HumBERT's classifier
+    where: GitHub
+    link: https://github.com/the-deep-nlp/classifier-trainer
+  humset:
+    authors: Selim Fekih, Nicolò Tamagnone, Benjamin Minixhofer and others
+    year: 2022
+    title: 'HumSet: Dataset of Multilingual Information Extraction and Classification for Humanitarian Crisis Response'
+    where: arXiv preprint
+    link: https://arxiv.org/abs/2210.04573
+  multieurlex:
+    authors: Ilias Chalkidis, Manos Fergadiotis and Ion Androutsopoulos
+    year: 2021
+    title: MultiEURLEX – A multi-lingual and multi-label legal document classification dataset for zero-shot cross-lingual
+      transfer
+    where: arXiv preprint
+    link: https://arxiv.org/abs/2109.00904
+  legalbert:
+    authors: Ilias Chalkidis, Manos Fergadiotis, Prodromos Malakasiotis and others
+    year: 2020
+    title: 'LEGAL-BERT: The Muppets straight out of Law School'
+    where: arXiv preprint
+    link: https://arxiv.org/abs/2010.02559
+  dualmlc:
+    authors: Hui Ye, Jing Zhang, Xiulong Yang and Rajshekhar Sunderraman
+    year: 2026
+    title: LLM-Enhanced Dual-Branch Learning for Large-Scale Multi-Label Text Classification
+    where: arXiv preprint
+    link: https://arxiv.org/abs/2609.12915
+  bgem3:
+    authors: Jianlv Chen, Shitao Xiao, Peitian Zhang and others
+    year: 2024
+    title: 'M3-Embedding: Multi-Linguality, Multi-Functionality, Multi-Granularity Text Embeddings Through Self-Knowledge
+      Distillation'
+    where: arXiv preprint
+    link: https://arxiv.org/abs/2402.03216
+  lora:
+    authors: Edward J. Hu, Yelong Shen, Phillip Wallis and others
+    year: 2021
+    title: 'LoRA: Low-Rank Adaptation of Large Language Models'
+    where: arXiv preprint
+    link: https://arxiv.org/abs/2106.09685
+  qwen:
+    authors: Qwen team
+    year: 2024
+    title: Qwen2.5 Technical Report
+    where: arXiv preprint
+    link: https://arxiv.org/abs/2412.15115
+  gliner:
+    authors: Fastino
+    year: 2026
+    title: 'Introducing GLiNER2.5: Efficient Span-Free Information Extraction with Schema-Driven Interface'
+    where: Fastino blog
+    link: https://fastino.ai/blog/gliner2-5-span-free-information-extraction
+  omikuji:
+    authors: Tom Dong
+    year: null
+    title: 'Omikuji: an efficient implementation of Partitioned Label Trees'
+    where: Software, GitHub
+    link: https://github.com/tomtung/omikuji
+  pecos:
+    authors: Amazon
+    year: null
+    title: 'PECOS: Prediction for Enormous and Correlated Output Spaces'
+    where: Software, GitHub
+    link: https://github.com/amzn/pecos
+  bgereranker:
+    authors: BAAI
+    year: null
+    title: bge-reranker-v2-m3
+    where: Model card, Hugging Face
+    link: https://huggingface.co/BAAI/bge-reranker-v2-m3

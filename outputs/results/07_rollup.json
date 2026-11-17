@@ -1,0 +1,488 @@
+{
+  "chunk_words": 400,
+  "models": {
+    "main": {
+      "input_price": 0.05,
+      "max_tokens": 8000,
+      "model": "openai/gpt-oss-120b:novita",
+      "output_price": 0.25,
+      "provider": "huggingface_router"
+    },
+    "small": {
+      "input_price": 0.03,
+      "max_tokens": 8000,
+      "model": "openai/gpt-oss-20b:deepinfra",
+      "output_price": 0.14,
+      "provider": "huggingface_router"
+    },
+    "strong": {
+      "input_price": 8.0,
+      "json_mode": false,
+      "max_tokens": 16000,
+      "model": "claude-opus-5-5-fast",
+      "output_price": 40.0,
+      "provider": "anthropic_foundry",
+      "temperature": null
+    }
+  },
+  "results": {
+    "eurlex": {
+      "any_chunk": {
+        "exact": {
+          "f1": 0.11275964391691393,
+          "items": 120,
+          "macro_f1": 0.3684644276573039,
+          "precision": 0.06328538985616956,
+          "recall": 0.5166872682323856
+        },
+        "labels_per_item": 55.04,
+        "languages": {
+          "en": {
+            "f1_finest_tier": 0.2562,
+            "items": 120
+          }
+        },
+        "rarity": {
+          "common": {
+            "gold_labels": 716,
+            "recall": 0.5112
+          },
+          "rare": {
+            "gold_labels": 55,
+            "recall": 0.4727
+          },
+          "unseen": {
+            "gold_labels": 38,
+            "recall": 0.6842
+          }
+        },
+        "tiers": {
+          "1": {
+            "f1": 0.5482734319943622,
+            "items": 120,
+            "macro_f1": 0.5194407138088264,
+            "precision": 0.406478578892372,
+            "recall": 0.841991341991342
+          },
+          "2": {
+            "f1": 0.362400906002265,
+            "items": 120,
+            "macro_f1": 0.3972798998001568,
+            "precision": 0.24242424242424243,
+            "recall": 0.7174887892376681
+          },
+          "3": {
+            "f1": 0.2562170308967596,
+            "items": 120,
+            "macro_f1": 0.37212775024316797,
+            "precision": 0.16195617656398856,
+            "recall": 0.6129807692307693
+          }
+        }
+      },
+      "certainty_weighted": {
+        "exact": {
+          "f1": 0.11280528943462421,
+          "items": 120,
+          "macro_f1": 0.3684644276573039,
+          "precision": 0.0633141472281127,
+          "recall": 0.5166872682323856
+        },
+        "labels_per_item": 55.02,
+        "languages": {
+          "en": {
+            "f1_finest_tier": 0.2558,
+            "items": 120
+          }
+        },
+        "rarity": {
+          "common": {
+            "gold_labels": 716,
+            "recall": 0.5112
+          },
+          "rare": {
+            "gold_labels": 55,
+            "recall": 0.4727
+          },
+          "unseen": {
+            "gold_labels": 38,
+            "recall": 0.6842
+          }
+        },
+        "tiers": {
+          "1": {
+            "f1": 0.5482734319943622,
+            "items": 120,
+            "macro_f1": 0.5194407138088264,
+            "precision": 0.406478578892372,
+            "recall": 0.841991341991342
+          },
+          "2": {
+            "f1": 0.3617824773413897,
+            "items": 120,
+            "macro_f1": 0.3970581171035701,
+            "precision": 0.24204143506821627,
+            "recall": 0.7159940209267563
+          },
+          "3": {
+            "f1": 0.2558431766775572,
+            "items": 120,
+            "macro_f1": 0.3720007200406661,
+            "precision": 0.1617413409596441,
+            "recall": 0.6117788461538461
+          }
+        }
+      },
+      "chunks": 5289,
+      "cost_usd": 3.1187,
+      "differences": {
+        "certainty_weighted minus any_chunk": [
+          0.0,
+          0.0,
+          0.0001
+        ],
+        "certainty_weighted minus first_chunk_only": [
+          -0.0433,
+          -0.071,
+          -0.018
+        ],
+        "certainty_weighted minus share_of_chunks": [
+          -0.1059,
+          -0.1338,
+          -0.0781
+        ]
+      },
+      "documents": 120,
+      "first_chunk_only": {
+        "exact": {
+          "f1": 0.15615141955835962,
+          "items": 120,
+          "macro_f1": 0.11056280373521753,
+          "precision": 0.21568627450980393,
+          "recall": 0.12237330037082818
+        },
+        "labels_per_item": 3.83,
+        "languages": {
+          "en": {
+            "f1_finest_tier": 0.2286,
+            "items": 120
+          }
+        },
+        "rarity": {
+          "common": {
+            "gold_labels": 716,
+            "recall": 0.1159
+          },
+          "rare": {
+            "gold_labels": 55,
+            "recall": 0.1818
+          },
+          "unseen": {
+            "gold_labels": 38,
+            "recall": 0.1579
+          }
+        },
+        "tiers": {
+          "1": {
+            "f1": 0.413075780089153,
+            "items": 120,
+            "macro_f1": 0.31741356682533145,
+            "precision": 0.6587677725118484,
+            "recall": 0.3008658008658009
+          },
+          "2": {
+            "f1": 0.29067245119305857,
+            "items": 120,
+            "macro_f1": 0.22048954738752227,
+            "precision": 0.5296442687747036,
+            "recall": 0.20029895366218237
+          },
+          "3": {
+            "f1": 0.2285714285714286,
+            "items": 120,
+            "macro_f1": 0.16282778083413127,
+            "precision": 0.4444444444444444,
+            "recall": 0.15384615384615385
+          }
+        }
+      },
+      "malformed_chunks": 51,
+      "share_of_chunks": {
+        "exact": {
+          "f1": 0.21867115222876368,
+          "items": 120,
+          "macro_f1": 0.15363668430335098,
+          "precision": 0.34210526315789475,
+          "recall": 0.16069221260815822
+        },
+        "labels_per_item": 3.17,
+        "languages": {
+          "en": {
+            "f1_finest_tier": 0.2794,
+            "items": 120
+          }
+        },
+        "rarity": {
+          "common": {
+            "gold_labels": 716,
+            "recall": 0.1522
+          },
+          "rare": {
+            "gold_labels": 55,
+            "recall": 0.1455
+          },
+          "unseen": {
+            "gold_labels": 38,
+            "recall": 0.3421
+          }
+        },
+        "tiers": {
+          "1": {
+            "f1": 0.4741641337386017,
+            "items": 120,
+            "macro_f1": 0.4735076548379395,
+            "precision": 0.7959183673469388,
+            "recall": 0.33766233766233766
+          },
+          "2": {
+            "f1": 0.35201793721973096,
+            "items": 120,
+            "macro_f1": 0.28510437117239185,
+            "precision": 0.7040358744394619,
+            "recall": 0.23467862481315396
+          },
+          "3": {
+            "f1": 0.2793709528214616,
+            "items": 120,
+            "macro_f1": 0.20337197793899894,
+            "precision": 0.606425702811245,
+            "recall": 0.1814903846153846
+          }
+        }
+      }
+    },
+    "humset": {
+      "any_chunk": {
+        "exact": {
+          "f1": 0.5446884009758262,
+          "items": 200,
+          "macro_f1": 0.44729705201516706,
+          "precision": 0.5227756492124308,
+          "recall": 0.5685185185185185
+        },
+        "labels_per_item": 11.74,
+        "languages": {
+          "en": {
+            "f1_finest_tier": 0.4234,
+            "items": 96
+          },
+          "es": {
+            "f1_finest_tier": 0.4259,
+            "items": 57
+          },
+          "fr": {
+            "f1_finest_tier": 0.5363,
+            "items": 47
+          }
+        },
+        "rarity": {
+          "common": {
+            "gold_labels": 2064,
+            "recall": 0.5727
+          },
+          "rare": {
+            "gold_labels": 96,
+            "recall": 0.4792
+          }
+        },
+        "tiers": {
+          "1": {
+            "f1": 0.6754098360655738,
+            "items": 200,
+            "macro_f1": 0.6292401341082218,
+            "precision": 0.6668628605061802,
+            "recall": 0.6841787439613527
+          },
+          "2": {
+            "f1": 0.4507535927094287,
+            "items": 200,
+            "macro_f1": 0.39200211325020085,
+            "precision": 0.4197127937336815,
+            "recall": 0.4867524602573808
+          }
+        }
+      },
+      "certainty_weighted": {
+        "exact": {
+          "f1": 0.5446884009758262,
+          "items": 200,
+          "macro_f1": 0.44729705201516706,
+          "precision": 0.5227756492124308,
+          "recall": 0.5685185185185185
+        },
+        "labels_per_item": 11.74,
+        "languages": {
+          "en": {
+            "f1_finest_tier": 0.4234,
+            "items": 96
+          },
+          "es": {
+            "f1_finest_tier": 0.4259,
+            "items": 57
+          },
+          "fr": {
+            "f1_finest_tier": 0.5363,
+            "items": 47
+          }
+        },
+        "rarity": {
+          "common": {
+            "gold_labels": 2064,
+            "recall": 0.5727
+          },
+          "rare": {
+            "gold_labels": 96,
+            "recall": 0.4792
+          }
+        },
+        "tiers": {
+          "1": {
+            "f1": 0.6754098360655738,
+            "items": 200,
+            "macro_f1": 0.6292401341082218,
+            "precision": 0.6668628605061802,
+            "recall": 0.6841787439613527
+          },
+          "2": {
+            "f1": 0.4507535927094287,
+            "items": 200,
+            "macro_f1": 0.39200211325020085,
+            "precision": 0.4197127937336815,
+            "recall": 0.4867524602573808
+          }
+        }
+      },
+      "chunks": 4340,
+      "cost_usd": 1.3112,
+      "differences": {
+        "certainty_weighted minus any_chunk": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "certainty_weighted minus first_chunk_only": [
+          0.3834,
+          0.3534,
+          0.4099
+        ],
+        "certainty_weighted minus share_of_chunks": [
+          0.2792,
+          0.2395,
+          0.3201
+        ]
+      },
+      "documents": 200,
+      "first_chunk_only": {
+        "exact": {
+          "f1": 0.16131621187800962,
+          "items": 200,
+          "macro_f1": 0.13312029847665732,
+          "precision": 0.6054216867469879,
+          "recall": 0.09305555555555556
+        },
+        "labels_per_item": 1.66,
+        "languages": {
+          "en": {
+            "f1_finest_tier": 0.123,
+            "items": 96
+          },
+          "es": {
+            "f1_finest_tier": 0.123,
+            "items": 57
+          },
+          "fr": {
+            "f1_finest_tier": 0.1799,
+            "items": 47
+          }
+        },
+        "rarity": {
+          "common": {
+            "gold_labels": 2064,
+            "recall": 0.0945
+          },
+          "rare": {
+            "gold_labels": 96,
+            "recall": 0.0625
+          }
+        },
+        "tiers": {
+          "1": {
+            "f1": 0.21949974476773862,
+            "items": 200,
+            "macro_f1": 0.20608941854866628,
+            "precision": 0.7095709570957096,
+            "recall": 0.12983091787439613
+          },
+          "2": {
+            "f1": 0.13720316622691292,
+            "items": 200,
+            "macro_f1": 0.11895305433414309,
+            "precision": 0.5333333333333333,
+            "recall": 0.07872823618470856
+          }
+        }
+      },
+      "malformed_chunks": 0,
+      "share_of_chunks": {
+        "exact": {
+          "f1": 0.26550598476605003,
+          "items": 200,
+          "macro_f1": 0.21115428454857463,
+          "precision": 0.6130653266331658,
+          "recall": 0.16944444444444445
+        },
+        "labels_per_item": 2.98,
+        "languages": {
+          "en": {
+            "f1_finest_tier": 0.1913,
+            "items": 96
+          },
+          "es": {
+            "f1_finest_tier": 0.2207,
+            "items": 57
+          },
+          "fr": {
+            "f1_finest_tier": 0.2365,
+            "items": 47
+          }
+        },
+        "rarity": {
+          "common": {
+            "gold_labels": 2064,
+            "recall": 0.173
+          },
+          "rare": {
+            "gold_labels": 96,
+            "recall": 0.0938
+          }
+        },
+        "tiers": {
+          "1": {
+            "f1": 0.34974689369535206,
+            "items": 200,
+            "macro_f1": 0.3239530648076435,
+            "precision": 0.7350096711798839,
+            "recall": 0.22946859903381642
+          },
+          "2": {
+            "f1": 0.20989143546441497,
+            "items": 200,
+            "macro_f1": 0.18261922331463207,
+            "precision": 0.516320474777448,
+            "recall": 0.13171839515518546
+          }
+        }
+      }
+    }
+  }
+}

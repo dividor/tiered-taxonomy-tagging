@@ -1,0 +1,58 @@
+name: Bug report
+description: Something in the code, a notebook or the pipeline does not work as described
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before you file
+      options:
+        - label: I have searched the existing issues
+          required: true
+        - label: "`uv run python scripts/check_setup.py` passes"
+          required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What went wrong
+      placeholder: Which step, script or notebook, and what happened.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Run `scripts/run_pipeline.sh 08`
+        2. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error messages
+      description: Remove any token, key or dataset name you do not want public.
+      render: shell
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: |
+        - OS:
+        - Python version (`uv run python --version`):
+        - Commit of this repository:
+        - Model providers, if you changed configs/experiment.yaml:
+    validations:
+      required: true

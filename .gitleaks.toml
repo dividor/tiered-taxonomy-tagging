@@ -1,0 +1,12 @@
+title = "Gitleaks config for the tiered taxonomy tests"
+
+[extend]
+useDefault = true
+
+[allowlist]
+  description = "Known false positives"
+  regexTarget = "line"
+  regexes = [
+    # detect-secrets' baseline stores SHA-1 hashes of the strings it audited, not the strings
+    '''"hashed_secret": "[0-9a-f]{40}"''',
+  ]

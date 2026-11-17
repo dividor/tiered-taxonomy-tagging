@@ -1,0 +1,279 @@
+# Everything an experiment depends on. To swap a model, change an entry under `models`: `provider` is either
+# huggingface_router (Hugging Face Inference Providers, through LangChain's OpenAI integration) or any provider name
+# LangChain's init_chat_model accepts. Prices are US dollars per million tokens, for cost estimates only.
+models:
+  main:
+    provider: huggingface_router
+    model: openai/gpt-oss-120b:novita
+    input_price: 0.05
+    output_price: 0.25
+    max_tokens: 8000
+  small:
+    provider: huggingface_router
+    model: openai/gpt-oss-20b:deepinfra
+    input_price: 0.03
+    output_price: 0.14
+    max_tokens: 8000
+
+# The open models standing in for the keyword generators in Kähler et al.'s LLM-Ensemble, whose own are not on the
+# router. Their ranker, Llama-3.1-8B-Instruct, is, but its providers do not offer JSON mode.
+paper_models:
+  generators:
+    - {provider: huggingface_router, model: "google/gemma-3-12b-it:deepinfra", input_price: 0.05, output_price: 0.15, max_tokens: 2000}
+    - {provider: huggingface_router, model: "google/gemma-3-27b-it:deepinfra", input_price: 0.08, output_price: 0.16, max_tokens: 2000}
+    - {provider: huggingface_router, model: "openai/gpt-oss-20b:deepinfra", input_price: 0.03, output_price: 0.14, max_tokens: 4000}
+    - {provider: huggingface_router, model: "NousResearch/Hermes-3-Llama-3.1-70B:deepinfra", input_price: 0.7, output_price: 0.7, max_tokens: 2000}
+    - {provider: huggingface_router, model: "Qwen/Qwen3-14B:deepinfra", input_price: 0.12, output_price: 0.24, max_tokens: 4000}
+  ki_fsprompt_generators: 2
+  ranker: {provider: huggingface_router, model: "meta-llama/Llama-3.1-8B-Instruct:deepinfra", input_price: 0.02, output_price: 0.05, max_tokens: 3000, json_mode: false}
+  few_shot_sizes: [8, 12]
+  similar_documents: 8
+  # Every item makes several calls in a row, and some of these models are slow.
+  workers: 32
+
+embeddings:
+  provider: huggingface_inference
+  model: BAAI/bge-m3
+  batch_size: 32
+
+seed: 7
+workers: 16
+
+text:
+  # The opening of a document stands in for it in the bake-off, the funnel and the tree walk. Chunks are for rollup.
+  input_words: 500
+  chunk_words: 400
+
+samples:
+  pilot_items: 50
+  eurlex:
+    long_threshold_words: 5000
+    normal_documents: 300
+    long_documents: 300
+    rollup_documents: 120
+    rollup_max_chunks: 60
+  humset:
+    per_language: 500
+    rollup_min_entries: 3
+    rollup_documents: 200
+
+trained:
+  max_features: 300000
+  # Chosen on the development split, once per test set, from these choices.
+  top_k_choices: [1, 2, 3, 4, 5, 6, 8, 10]
+  # Notebook 08 gives every ranked method both a label limit and a score cut-off, chosen together from these.
+  cut_limits: [1, 2, 3, 4, 5, 6, 8, 10, 15, 20]
+  cut_thresholds: [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.5, 0.6, 0.7, 0.8]
+  tuning_items: 2000
+  embedding_classifier:
+    epochs: 30
+    batch_size: 256
+    learning_rates: [0.001, 0.003, 0.01, 0.03, 0.1]
+  neighbour_choices: [5, 10, 20, 50]
+
+funnel:
+  # Chosen on the development split in exploratory work: one view of the text, 100 candidates, no tier pruning.
+  retrieve_per_view: 100
+  keep_candidates: 100
+  prune_tier: 2
+  prune_keep_share: 1.0
+  candidate_grid: [5, 10, 20, 50, 100, 200]
+  hybrid_candidates_each: 50
+
+pipeline:
+  keywords_per_document: 12
+  candidates_per_keyword: 3
+  ensemble_weight: 0.3
+  relevance_weight: 0.7
+  keep_score: 0.5
+  keep_score_choices: [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+  tuning_items: 200
+
+tree_walk:
+  max_branches: 3
+  max_calls: 15
+  anchor_entries: 8
+  look_ahead_leaves: 3
+
+rollup:
+  majority_share: 0.2
+  certainty_floor: 0.5
+
+# The combined method (notebook 10): how many of each source's top labels it weighs per document.
+combined:
+  per_source: 30
+
+# The fine-tuned reranker's inputs, which scripts/hf_jobs/prepare_inputs.py writes.
+reranker:
+  # Candidate labels per local model for each item the reranker scores, chosen from the share of gold labels the
+  # lists hold on development items, which scripts/hf_jobs/prepare_inputs.py prints.
+  per_source: {eurlex: 30, humset: 15}
+  coverage_items: 4000
+  # Training items given wrong-answer candidates, and how many per source.
+  train_items: 30000
+  train_per_source: 15
+  # The embedding classifier's learning rate when trained with the newer laws: the rate chosen in notebook 08.
+  newer_laws_learning_rate: 0.01
+
+# The combined method (notebook 10). Development items train the combiner and choose its cut-offs. On
+# MultiEURLEX these are the later half by date, because the earlier half joins training.
+new_technique:
+  humset: {fit_items: 6000, cut_items: 4000}
+  eurlex: {fit_items: 2000, cut_items: 500}
+
+# Notebook 11. The time-aware priors count each label among this many of the most recent training documents.
+# Chosen on development laws. Rank correlation of recent use with use in the later development laws was 0.566,
+# 0.579 and 0.585 for windows of 2,500, 5,000 and 10,000 laws; how well the recent trend carried on was 0.510,
+# 0.448 and 0.390. 5,000 keeps most of both.
+second_attempt:
+  recent_documents: 5000
+
+# The label cards were written in two goes: those for the EU laws and HumSet 1.0.0 while the main model's reply
+# limit was 4,000 tokens, HumSet 2.0.0's later at 8,000. Each keeps its limit, so a rerun asks what our run asked.
+label_cards:
+  batch_size: 40
+  max_tokens: {eurlex: 4000, humset: 4000, humset_v2: 8000}
+
+# The fine-tuning runs on Hugging Face Jobs, which scripts/gpu_jobs.py launches. Each uploads `outputs` to the
+# dataset named by TAXONOMY_JOBS_DATASET in .env; a run whose outputs are already there is not launched again.
+# Prices are US dollars per hour of each machine type in November 2026, for the costs the report gives.
+gpu_jobs:
+  prices: {t4-small: 0.4, a10g-small: 1.0, a10g-large: 1.5}
+  runs:
+    xr_transformer_eurlex:
+      script: train_xr_transformer.py
+      flavor: a10g-large
+      timeout: 6h
+      base: bert-base-uncased
+      args: [--test-set, eurlex]
+      outputs: [xr_transformer_eurlex_dev.json, xr_transformer_eurlex_test.json]
+    xr_transformer_humset:
+      script: train_xr_transformer.py
+      flavor: a10g-small
+      timeout: 4h
+      base: bert-base-multilingual-cased
+      args: [--test-set, humset]
+      outputs: [xr_transformer_humset_dev.json, xr_transformer_humset_test.json]
+    classifier_humset:
+      script: fine_tune.py
+      flavor: a10g-small
+      timeout: 4h
+      base: nlp-thedeep/humbert
+      args: [--kind, classifier, --test-set, humset, --base-model, nlp-thedeep/humbert, --run-name, classifier_humset, --max-length, 256, --epochs, 3]
+      outputs: [classifier_humset_dev.json, classifier_humset_test.json, classifier_humset_history.json]
+    classifier_eurlex:
+      script: fine_tune.py
+      flavor: a10g-small
+      timeout: 4h
+      base: nlpaueb/legal-bert-base-uncased
+      args: [--kind, classifier, --test-set, eurlex, --base-model, nlpaueb/legal-bert-base-uncased, --run-name, classifier_eurlex, --max-length, 512, --epochs, 5]
+      outputs: [classifier_eurlex_dev.json, classifier_eurlex_test.json, classifier_eurlex_history.json]
+    classifier_eurlex_newer:
+      script: fine_tune.py
+      flavor: a10g-small
+      timeout: 4h
+      base: nlpaueb/legal-bert-base-uncased
+      args: [--kind, classifier, --test-set, eurlex, --base-model, nlpaueb/legal-bert-base-uncased, --run-name, classifier_eurlex_newer, --with-newer-laws, --max-length, 512, --epochs, 5]
+      outputs: [classifier_eurlex_newer_dev.json, classifier_eurlex_newer_test.json, classifier_eurlex_newer_history.json]
+    reranker_humset:
+      script: fine_tune.py
+      flavor: a10g-small
+      timeout: 4h
+      base: BAAI/bge-reranker-v2-m3
+      needs_prepared: true
+      args: [--kind, reranker, --test-set, humset, --base-model, BAAI/bge-reranker-v2-m3, --run-name, reranker_humset, --epochs, 2, --batch, 16, --eval-batch, 64, --max-length, 256, --max-pairs, 200000]
+      outputs: [reranker_humset_dev.json, reranker_humset_test.json, reranker_humset_history.json]
+    reranker_eurlex_newer:
+      script: fine_tune.py
+      flavor: a10g-small
+      timeout: 4h
+      base: BAAI/bge-reranker-v2-m3
+      needs_prepared: true
+      args: [--kind, reranker, --test-set, eurlex, --base-model, BAAI/bge-reranker-v2-m3, --run-name, reranker_eurlex_newer, --with-newer-laws, --epochs, 2, --batch, 16, --eval-batch, 64, --max-length, 384, --max-pairs, 200000]
+      outputs: [reranker_eurlex_newer_dev.json, reranker_eurlex_newer_test.json, reranker_eurlex_newer_history.json]
+    llm_humset:
+      script: fine_tune.py
+      flavor: a10g-small
+      timeout: 4h
+      base: Qwen/Qwen2.5-7B
+      args: [--kind, llm, --test-set, humset, --base-model, Qwen/Qwen2.5-7B, --run-name, llm_humset, --epochs, 1, --batch, 4, --eval-batch, 16, --max-length, 256, --max-train, 30000, --learning-rate, 2e-4]
+      outputs: [llm_humset_dev.json, llm_humset_test.json, llm_humset_history.json]
+    llm_eurlex_newer:
+      script: fine_tune.py
+      flavor: a10g-small
+      timeout: 4h
+      base: Qwen/Qwen2.5-7B
+      args: [--kind, llm, --test-set, eurlex, --base-model, Qwen/Qwen2.5-7B, --run-name, llm_eurlex_newer, --with-newer-laws, --epochs, 1, --batch, 4, --eval-batch, 16, --max-length, 384, --max-train, 30000, --learning-rate, 2e-4]
+      outputs: [llm_eurlex_newer_dev.json, llm_eurlex_newer_test.json, llm_eurlex_newer_history.json]
+    gliner_humset:
+      script: fine_tune.py
+      flavor: a10g-small
+      timeout: 6h
+      base: fastino/GLiNER2.5-multi-Decide
+      args: [--kind, gliner, --test-set, humset, --base-model, fastino/GLiNER2.5-multi-Decide, --run-name, gliner_humset, --epochs, 2, --batch, 8, --eval-batch, 16, --max-length, 256, --max-train, 60000, --learning-rate, 1e-5]
+      outputs: [gliner_humset_dev.json, gliner_humset_test.json, gliner_humset_history.json]
+    gliner_eurlex_newer:
+      script: fine_tune.py
+      flavor: a10g-small
+      timeout: 6h
+      base: fastino/GLiNER2.5-Decide
+      needs_prepared: true
+      args: [--kind, gliner, --test-set, eurlex, --base-model, fastino/GLiNER2.5-Decide, --run-name, gliner_eurlex_newer, --with-newer-laws, --epochs, 2, --batch, 4, --eval-batch, 16, --max-length, 384, --max-train, 30000, --learning-rate, 1e-5]
+      outputs: [gliner_eurlex_newer_dev.json, gliner_eurlex_newer_test.json, gliner_eurlex_newer_history.json]
+    humbert_reproduction_full:
+      script: reproduce_humbert.py
+      flavor: a10g-small
+      timeout: 6h
+      base: nlp-thedeep/humbert
+      humbert_version: "2.0.0"
+      outputs: [humbert_reproduction/full/run.json, humbert_reproduction/full/results.csv, humbert_reproduction/full/thresholds.json, humbert_reproduction/full/predictions.jsonl]
+    humbert_reproduction_full_v1:
+      script: reproduce_humbert.py
+      flavor: a10g-small
+      timeout: 6h
+      base: nlp-thedeep/humbert
+      humbert_version: "1.0.0"
+      outputs: [humbert_reproduction/full_v1/run.json, humbert_reproduction/full_v1/results.csv, humbert_reproduction/full_v1/thresholds.json, humbert_reproduction/full_v1/predictions.jsonl, humbert_reproduction/full_v1/rankings_validation.jsonl, humbert_reproduction/full_v1/rankings_test.jsonl]
+    classifier_humset_v2:
+      script: fine_tune.py
+      flavor: a10g-small
+      timeout: 4h
+      base: nlp-thedeep/humbert
+      args: [--kind, classifier, --test-set, humset_v2, --base-model, nlp-thedeep/humbert, --run-name, classifier_humset_v2, --max-length, 256, --epochs, 3]
+      outputs: [classifier_humset_v2_dev.json, classifier_humset_v2_test.json, classifier_humset_v2_history.json]
+    llm_humset_v2:
+      script: fine_tune.py
+      flavor: a10g-small
+      timeout: 4h
+      base: Qwen/Qwen2.5-7B
+      args: [--kind, llm, --test-set, humset_v2, --base-model, Qwen/Qwen2.5-7B, --run-name, llm_humset_v2, --epochs, 1, --batch, 4, --eval-batch, 16, --max-length, 256, --max-train, 30000, --learning-rate, 2e-4]
+      outputs: [llm_humset_v2_dev.json, llm_humset_v2_test.json, llm_humset_v2_history.json]
+    gliner_humset_v2:
+      script: fine_tune.py
+      flavor: a10g-small
+      timeout: 6h
+      base: fastino/GLiNER2.5-multi-Decide
+      args: [--kind, gliner, --test-set, humset_v2, --base-model, fastino/GLiNER2.5-multi-Decide, --run-name, gliner_humset_v2, --epochs, 2, --batch, 8, --eval-batch, 16, --max-length, 256, --max-train, 60000, --learning-rate, 1e-5]
+      outputs: [gliner_humset_v2_dev.json, gliner_humset_v2_test.json, gliner_humset_v2_history.json]
+    xr_transformer_humset_v2:
+      script: train_xr_transformer.py
+      flavor: a10g-small
+      timeout: 4h
+      base: bert-base-multilingual-cased
+      args: [--test-set, humset_v2]
+      outputs: [xr_transformer_humset_v2_dev.json, xr_transformer_humset_v2_test.json]
+    reranker_humset_v2:
+      script: fine_tune.py
+      flavor: a10g-small
+      timeout: 4h
+      base: BAAI/bge-reranker-v2-m3
+      needs_prepared: true
+      args: [--kind, reranker, --test-set, humset_v2, --base-model, BAAI/bge-reranker-v2-m3, --run-name, reranker_humset_v2, --epochs, 2, --batch, 16, --eval-batch, 64, --max-length, 256, --max-pairs, 200000]
+      outputs: [reranker_humset_v2_dev.json, reranker_humset_v2_test.json, reranker_humset_v2_history.json]
+    humbert_reproduction_full_v2_rankings:
+      script: reproduce_humbert.py
+      flavor: a10g-small
+      timeout: 6h
+      base: nlp-thedeep/humbert
+      humbert_version: "2.0.0"
+      outputs: [humbert_reproduction/full_v2_rankings/run.json, humbert_reproduction/full_v2_rankings/results.csv, humbert_reproduction/full_v2_rankings/thresholds.json, humbert_reproduction/full_v2_rankings/predictions.jsonl, humbert_reproduction/full_v2_rankings/rankings_validation.jsonl, humbert_reproduction/full_v2_rankings/rankings_test.jsonl]

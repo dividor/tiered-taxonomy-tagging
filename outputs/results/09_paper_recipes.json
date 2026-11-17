@@ -1,0 +1,330 @@
+{
+  "eurlex": {
+    "items": 600,
+    "ki_fsprompt": {
+      "cost_per_1000": 0.4,
+      "dev_f1": 0.4054,
+      "dev_run": {
+        "calls": 600,
+        "cost_usd": 0.0789,
+        "invalid": 0,
+        "items": 200,
+        "malformed": 16,
+        "method": "ki_fsprompt",
+        "seconds": 2.2
+      },
+      "limit": 10,
+      "minus_pipeline": [
+        0.1333,
+        0.1194,
+        0.1472
+      ],
+      "run": {
+        "calls": 1800,
+        "cost_usd": 0.2415,
+        "invalid": 0,
+        "items": 600,
+        "malformed": 28,
+        "method": "ki_fsprompt",
+        "seconds": 8.9
+      },
+      "scores": {
+        "exact": {
+          "f1": 0.3396264924992346,
+          "items": 600,
+          "macro_f1": 0.3479332475243583,
+          "precision": 0.2826086956521739,
+          "recall": 0.42546663257478906
+        },
+        "labels_per_item": 9.81,
+        "languages": {
+          "en": {
+            "f1_finest_tier": 0.5395,
+            "items": 600
+          }
+        },
+        "rarity": {
+          "common": {
+            "gold_labels": 3605,
+            "recall": 0.4405
+          },
+          "rare": {
+            "gold_labels": 186,
+            "recall": 0.2473
+          },
+          "unseen": {
+            "gold_labels": 120,
+            "recall": 0.25
+          }
+        },
+        "tiers": {
+          "1": {
+            "f1": 0.6827704147071398,
+            "items": 600,
+            "macro_f1": 0.6300521513277335,
+            "precision": 0.6507742461287693,
+            "recall": 0.7180755395683454
+          },
+          "2": {
+            "f1": 0.5870588235294117,
+            "items": 600,
+            "macro_f1": 0.49702451588229957,
+            "precision": 0.5660805445263755,
+            "recall": 0.6096518020769701
+          },
+          "3": {
+            "f1": 0.5395414131960692,
+            "items": 600,
+            "macro_f1": 0.4540774087270044,
+            "precision": 0.5307249712313004,
+            "recall": 0.5486557221032595
+          }
+        }
+      },
+      "threshold": 0.1
+    },
+    "llm_ensemble": {
+      "cost_per_1000": 6.69,
+      "dev_f1": 0.1586,
+      "dev_run": {
+        "calls": 2200,
+        "cost_usd": 1.2981,
+        "invalid": 0,
+        "items": 200,
+        "malformed": 78,
+        "method": "llm_ensemble",
+        "seconds": 15.0
+      },
+      "limit": 10,
+      "minus_pipeline": [
+        -0.0384,
+        -0.0482,
+        -0.0275
+      ],
+      "run": {
+        "calls": 6600,
+        "cost_usd": 4.0142,
+        "invalid": 0,
+        "items": 600,
+        "malformed": 304,
+        "method": "llm_ensemble",
+        "seconds": 45.1
+      },
+      "scores": {
+        "exact": {
+          "f1": 0.1678942589042478,
+          "items": 600,
+          "macro_f1": 0.19236693889114226,
+          "precision": 0.13866666666666666,
+          "recall": 0.21273331628739453
+        },
+        "labels_per_item": 10.0,
+        "languages": {
+          "en": {
+            "f1_finest_tier": 0.2955,
+            "items": 600
+          }
+        },
+        "rarity": {
+          "common": {
+            "gold_labels": 3605,
+            "recall": 0.213
+          },
+          "rare": {
+            "gold_labels": 186,
+            "recall": 0.1774
+          },
+          "unseen": {
+            "gold_labels": 120,
+            "recall": 0.2583
+          }
+        },
+        "tiers": {
+          "1": {
+            "f1": 0.5047197071855133,
+            "items": 600,
+            "macro_f1": 0.46333780471323316,
+            "precision": 0.44152342433434444,
+            "recall": 0.5890287769784173
+          },
+          "2": {
+            "f1": 0.36814658210007045,
+            "items": 600,
+            "macro_f1": 0.3547430661490106,
+            "precision": 0.34179534153362995,
+            "recall": 0.3989004276114844
+          },
+          "3": {
+            "f1": 0.29553592742898066,
+            "items": 600,
+            "macro_f1": 0.2675520165821769,
+            "precision": 0.2965269461077844,
+            "recall": 0.29455151082560077
+          }
+        }
+      },
+      "threshold": 0.0
+    }
+  },
+  "humset": {
+    "items": 1500,
+    "ki_fsprompt": {
+      "cost_per_1000": 0.15,
+      "dev_f1": 0.5291,
+      "dev_run": {
+        "calls": 600,
+        "cost_usd": 0.0288,
+        "invalid": 0,
+        "items": 200,
+        "malformed": 2,
+        "method": "ki_fsprompt",
+        "seconds": 0.6
+      },
+      "limit": 6,
+      "minus_pipeline": [
+        0.1745,
+        0.1598,
+        0.1894
+      ],
+      "run": {
+        "calls": 4500,
+        "cost_usd": 0.2215,
+        "invalid": 0,
+        "items": 1500,
+        "malformed": 12,
+        "method": "ki_fsprompt",
+        "seconds": 4.5
+      },
+      "scores": {
+        "exact": {
+          "f1": 0.5193465176268272,
+          "items": 1500,
+          "macro_f1": 0.41981209929146474,
+          "precision": 0.45836947094535996,
+          "recall": 0.5990365542646642
+        },
+        "labels_per_item": 3.07,
+        "languages": {
+          "en": {
+            "f1_finest_tier": 0.439,
+            "items": 500
+          },
+          "es": {
+            "f1_finest_tier": 0.4417,
+            "items": 500
+          },
+          "fr": {
+            "f1_finest_tier": 0.4854,
+            "items": 500
+          }
+        },
+        "rarity": {
+          "common": {
+            "gold_labels": 3467,
+            "recall": 0.6014
+          },
+          "rare": {
+            "gold_labels": 62,
+            "recall": 0.4677
+          }
+        },
+        "tiers": {
+          "1": {
+            "f1": 0.5760526315789474,
+            "items": 1500,
+            "macro_f1": 0.5177659999127865,
+            "precision": 0.5093066542577943,
+            "recall": 0.662931556632344
+          },
+          "2": {
+            "f1": 0.45584045584045585,
+            "items": 1500,
+            "macro_f1": 0.3728097629866215,
+            "precision": 0.421978021978022,
+            "recall": 0.49561177077955604
+          }
+        }
+      },
+      "threshold": 0.25
+    },
+    "llm_ensemble": {
+      "cost_per_1000": 2.64,
+      "dev_f1": 0.3262,
+      "dev_run": {
+        "calls": 2200,
+        "cost_usd": 0.5232,
+        "invalid": 0,
+        "items": 200,
+        "malformed": 11,
+        "method": "llm_ensemble",
+        "seconds": 0.5
+      },
+      "limit": 5,
+      "minus_pipeline": [
+        -0.0502,
+        -0.0619,
+        -0.0383
+      ],
+      "run": {
+        "calls": 16500,
+        "cost_usd": 3.9547,
+        "invalid": 0,
+        "items": 1500,
+        "malformed": 83,
+        "method": "llm_ensemble",
+        "seconds": 2.7
+      },
+      "scores": {
+        "exact": {
+          "f1": 0.29466025724308176,
+          "items": 1500,
+          "macro_f1": 0.21388220408034747,
+          "precision": 0.2720729366602687,
+          "recall": 0.3213374893737603
+        },
+        "labels_per_item": 2.78,
+        "languages": {
+          "en": {
+            "f1_finest_tier": 0.1772,
+            "items": 500
+          },
+          "es": {
+            "f1_finest_tier": 0.1825,
+            "items": 500
+          },
+          "fr": {
+            "f1_finest_tier": 0.2126,
+            "items": 500
+          }
+        },
+        "rarity": {
+          "common": {
+            "gold_labels": 3467,
+            "recall": 0.3248
+          },
+          "rare": {
+            "gold_labels": 62,
+            "recall": 0.129
+          }
+        },
+        "tiers": {
+          "1": {
+            "f1": 0.41413176919929073,
+            "items": 1500,
+            "macro_f1": 0.3611156321060706,
+            "precision": 0.37676842889054357,
+            "recall": 0.4597213809812235
+          },
+          "2": {
+            "f1": 0.19093851132686082,
+            "items": 1500,
+            "macro_f1": 0.15437992145762314,
+            "precision": 0.25585429314830876,
+            "recall": 0.15229736706246774
+          }
+        }
+      },
+      "threshold": 0.3
+    }
+  }
+}

@@ -1,0 +1,631 @@
+{
+  "all_jobs_cost_usd": 23.15,
+  "eurlex": {
+    "best_single": {
+      "all": 52.93354921059332,
+      "level_3": 70.90372521246645
+    },
+    "best_single_source": "classifier",
+    "gain_over_best_single": {
+      "all": [
+        9.484202397275928,
+        9.054220448628168,
+        9.859419224484665
+      ],
+      "level_3": [
+        3.5860823054915802,
+        3.2099287506467973,
+        3.915995874744245
+      ]
+    },
+    "importance": {
+      "child_score": 0.02928,
+      "classifier_found": 0.0,
+      "classifier_score": 0.19868,
+      "co_occurrence": 0.05151,
+      "knn_found": 0.0,
+      "knn_score": 0.00174,
+      "label_search_found": 0.0,
+      "label_search_score": 0.008,
+      "llm_found": 0.0,
+      "llm_score": 0.05596,
+      "log_training_count": 0.11361,
+      "name_in_text": 0.00451,
+      "parent_score": 0.08781,
+      "reranker_found": 0.0,
+      "reranker_score": 0.06576,
+      "sources_agreeing": 0.03697,
+      "tier": 0.01144
+    },
+    "intervals": {
+      "all": [
+        61.84344819792136,
+        62.99316428289847
+      ],
+      "level_3": [
+        73.96057028104616,
+        75.05074588832642
+      ]
+    },
+    "passes": {
+      "all": true,
+      "level_3": true
+    },
+    "rarity": {
+      "classifier": {
+        "common": {
+          "gold_labels": 29698,
+          "recall": 0.5487
+        },
+        "rare": {
+          "gold_labels": 890,
+          "recall": 0.082
+        },
+        "unseen": {
+          "gold_labels": 518,
+          "recall": 0.0
+        }
+      },
+      "new_technique": {
+        "common": {
+          "gold_labels": 29698,
+          "recall": 0.6382
+        },
+        "rare": {
+          "gold_labels": 890,
+          "recall": 0.1416
+        },
+        "unseen": {
+          "gold_labels": 518,
+          "recall": 0.0058
+        }
+      }
+    },
+    "scores": {
+      "all": 62.417751607869256,
+      "level_3": 74.48980751795803
+    },
+    "sources": [
+      "classifier",
+      "knn",
+      "label_search",
+      "llm",
+      "reranker"
+    ],
+    "well_ahead": {
+      "all": true,
+      "level_3": true
+    }
+  },
+  "eurlex_choice": {
+    "chosen": [
+      "classifier",
+      "knn",
+      "label_search",
+      "llm",
+      "reranker"
+    ],
+    "chosen_scores": {
+      "all": 70.96544566544566,
+      "level_3": 80.55257546375194
+    },
+    "combined": {
+      "all sources": {
+        "all": 70.57853368853368,
+        "level_3": 80.7496073207838
+      },
+      "classifier": {
+        "all": 70.29836496836496,
+        "level_3": 80.23223857841505
+      },
+      "classifier_train_only": {
+        "all": 70.57059218559219,
+        "level_3": 80.63856835974484
+      },
+      "embedding_classifier": {
+        "all": 70.76392551892552,
+        "level_3": 80.54823147440793
+      },
+      "ki_fsprompt": {
+        "all": 71.24216505716507,
+        "level_3": 80.28038154655802
+      },
+      "knn": {
+        "all": 70.42328338328339,
+        "level_3": 80.45364994482642
+      },
+      "label_search": {
+        "all": 70.44406981906982,
+        "level_3": 80.8424500336265
+      },
+      "llm": {
+        "all": 70.2644017094017,
+        "level_3": 80.68004466122113
+      },
+      "omikuji": {
+        "all": 70.80068376068375,
+        "level_3": 80.64352284969932
+      },
+      "reranker": {
+        "all": 69.44883172383173,
+        "level_3": 80.73075728193375
+      },
+      "xr_transformer": {
+        "all": 70.77225163725164,
+        "level_3": 80.44366437484084
+      }
+    },
+    "single": {
+      "classifier": {
+        "all": 56.06483460983461,
+        "level_3": 76.86595755551637
+      },
+      "classifier_train_only": {
+        "all": 54.992639027639036,
+        "level_3": 72.1789931800226
+      },
+      "embedding_classifier": {
+        "all": 53.16837717837718,
+        "level_3": 73.3948286843875
+      },
+      "ki_fsprompt": {
+        "all": 38.019190254190256,
+        "level_3": 63.752249400925876
+      },
+      "knn": {
+        "all": 50.27396658896659,
+        "level_3": 68.13804680613504
+      },
+      "label_search": {
+        "all": 11.493620823620823,
+        "level_3": 22.425358595652714
+      },
+      "llm": {
+        "all": 55.317853257853244,
+        "level_3": 76.31904260771908
+      },
+      "omikuji": {
+        "all": 54.16844932844932,
+        "level_3": 70.70899729355614
+      },
+      "reranker": {
+        "all": 49.06772061272061,
+        "level_3": 68.47137610755257
+      },
+      "xr_transformer": {
+        "all": 53.45007048507049,
+        "level_3": 72.99585008129125
+      }
+    }
+  },
+  "eurlex_train_only": {
+    "best_single": {
+      "all": 50.022639603860185,
+      "level_3": 67.94507471417322
+    },
+    "best_single_source": "classifier",
+    "gain_over_best_single": {
+      "all": [
+        10.015213053286582,
+        9.606196679423519,
+        10.441410966688542
+      ],
+      "level_3": [
+        4.952442644803783,
+        4.578019973635942,
+        5.3921292002699746
+      ]
+    },
+    "importance": {
+      "child_score": 0.02863,
+      "classifier_found": 0.0,
+      "classifier_score": 0.29238,
+      "co_occurrence": 0.03064,
+      "embedding_classifier_found": 0.0,
+      "embedding_classifier_score": 0.01611,
+      "log_training_count": 0.10776,
+      "name_in_text": 0.00638,
+      "omikuji_found": 0.0,
+      "omikuji_score": 0.01231,
+      "parent_score": 0.05982,
+      "sources_agreeing": 0.01784,
+      "tier": 0.0086,
+      "xr_transformer_found": 0.0,
+      "xr_transformer_score": 0.03424
+    },
+    "intervals": {
+      "all": [
+        59.335770075227046,
+        60.672306644988986
+      ],
+      "level_3": [
+        72.26980792532179,
+        73.55820880516232
+      ]
+    },
+    "passes": {
+      "all": true,
+      "level_3": true
+    },
+    "rarity": {
+      "classifier": {
+        "common": {
+          "gold_labels": 29450,
+          "recall": 0.5245
+        },
+        "rare": {
+          "gold_labels": 1034,
+          "recall": 0.0619
+        },
+        "unseen": {
+          "gold_labels": 622,
+          "recall": 0.0
+        }
+      },
+      "new_technique": {
+        "common": {
+          "gold_labels": 29450,
+          "recall": 0.6205
+        },
+        "rare": {
+          "gold_labels": 1034,
+          "recall": 0.0948
+        },
+        "unseen": {
+          "gold_labels": 622,
+          "recall": 0.0
+        }
+      }
+    },
+    "scores": {
+      "all": 60.03785265714677,
+      "level_3": 72.897517358977
+    },
+    "sources": [
+      "classifier",
+      "embedding_classifier",
+      "omikuji",
+      "xr_transformer"
+    ],
+    "well_ahead": {
+      "all": true,
+      "level_3": false
+    }
+  },
+  "eurlex_train_only_choice": {
+    "chosen": [
+      "classifier",
+      "embedding_classifier",
+      "omikuji",
+      "xr_transformer"
+    ],
+    "chosen_scores": {
+      "all": 67.37065712065711,
+      "level_3": 80.68518507636155
+    },
+    "combined": {
+      "all sources": {
+        "all": 67.74129204129203,
+        "level_3": 80.68814544932192
+      },
+      "classifier": {
+        "all": 65.81692696192697,
+        "level_3": 80.23081575287459
+      },
+      "embedding_classifier": {
+        "all": 66.98684038184038,
+        "level_3": 80.5420271232036
+      },
+      "ki_fsprompt": {
+        "all": 67.97186702186703,
+        "level_3": 81.33193110810757
+      },
+      "knn": {
+        "all": 68.07496447996448,
+        "level_3": 80.79400847518495
+      },
+      "label_search": {
+        "all": 68.43509657009659,
+        "level_3": 80.68918219035865
+      },
+      "omikuji": {
+        "all": 66.64377178377178,
+        "level_3": 80.71698438816087
+      },
+      "xr_transformer": {
+        "all": 67.37186702186702,
+        "level_3": 80.37694775812422
+      }
+    },
+    "single": {
+      "classifier": {
+        "all": 54.992639027639036,
+        "level_3": 72.1789931800226
+      },
+      "embedding_classifier": {
+        "all": 52.550356310356314,
+        "level_3": 72.75792475498358
+      },
+      "ki_fsprompt": {
+        "all": 38.019190254190256,
+        "level_3": 63.752249400925876
+      },
+      "knn": {
+        "all": 48.896722721722725,
+        "level_3": 67.42769854328678
+      },
+      "label_search": {
+        "all": 11.493620823620823,
+        "level_3": 22.425358595652714
+      },
+      "omikuji": {
+        "all": 52.8770301920302,
+        "level_3": 73.66818346685994
+      },
+      "xr_transformer": {
+        "all": 53.45007048507049,
+        "level_3": 72.99585008129125
+      }
+    }
+  },
+  "humset": {
+    "best_single": {
+      "Mean": 0.5605372204631045,
+      "Pillars 1D": 0.5491566496745784,
+      "Pillars 2D": 0.6328267652092474,
+      "Sectors": 0.7258614095073616,
+      "Subpillars 1D": 0.43379191531708705,
+      "Subpillars 2D": 0.4610493626072485
+    },
+    "best_single_source": "classifier",
+    "gain_over_best_single": [
+      0.013387773905129907,
+      0.010029922105979309,
+      0.016184546811863428
+    ],
+    "importance": {
+      "child_score": -0.0,
+      "classifier_found": 0.0,
+      "classifier_score": 0.57453,
+      "co_occurrence": 0.00158,
+      "label_search_found": 0.0,
+      "label_search_score": 1e-05,
+      "log_training_count": 0.00267,
+      "name_in_text": 2e-05,
+      "parent_score": 0.00013,
+      "sources_agreeing": 0.0,
+      "tier": 7e-05,
+      "xr_transformer_found": 0.0,
+      "xr_transformer_score": 0.06022
+    },
+    "intervals": {
+      "Mean": [
+        0.5666663973737248,
+        0.5786146315577824
+      ],
+      "Pillars 1D": [
+        0.5352615858921494,
+        0.5675209483576273
+      ],
+      "Pillars 2D": [
+        0.6354242655006979,
+        0.6558607663784202
+      ],
+      "Sectors": [
+        0.7347326606534583,
+        0.7495266927091808
+      ],
+      "Subpillars 1D": [
+        0.4381960651957292,
+        0.46443118249455695
+      ],
+      "Subpillars 2D": [
+        0.463328893759956,
+        0.4882129481123583
+      ]
+    },
+    "other_averages": {
+      "Pillars 1D": {
+        "macro": 0.5525993868534133,
+        "micro": 0.5950481887670322,
+        "sample": 0.6797834084667599,
+        "weighted": 0.6085543758870134
+      },
+      "Pillars 2D": {
+        "macro": 0.6458031929899706,
+        "micro": 0.6855422157913261,
+        "sample": 0.7282698934837093,
+        "weighted": 0.6846297006924462
+      },
+      "Sectors": {
+        "macro": 0.7423479839884287,
+        "micro": 0.7566446413227058,
+        "sample": 0.7959476449625824,
+        "weighted": 0.7577107127090544
+      },
+      "Subpillars 1D": {
+        "macro": 0.45343739997790683,
+        "micro": 0.5306357549139606,
+        "sample": 0.5917075150698655,
+        "weighted": 0.5534341672536403
+      },
+      "Subpillars 2D": {
+        "macro": 0.47543700803145206,
+        "micro": 0.5843939494902379,
+        "sample": 0.6194219049636401,
+        "weighted": 0.587869903934634
+      }
+    },
+    "passes": {
+      "Pillars 1D": false,
+      "Pillars 2D": false,
+      "Sectors": false,
+      "Subpillars 1D": false,
+      "Subpillars 2D": false
+    },
+    "scores": {
+      "Mean": 0.5739249943682344,
+      "Pillars 1D": 0.5525993868534133,
+      "Pillars 2D": 0.6458031929899706,
+      "Sectors": 0.7423479839884287,
+      "Subpillars 1D": 0.45343739997790683,
+      "Subpillars 2D": 0.47543700803145206
+    },
+    "sources": [
+      "classifier",
+      "label_search",
+      "xr_transformer"
+    ],
+    "well_ahead": false
+  },
+  "humset_choice": {
+    "chosen": [
+      "classifier",
+      "label_search",
+      "xr_transformer"
+    ],
+    "chosen_scores": {
+      "Pillars 1D": 0.564987875168138,
+      "Pillars 2D": 0.639116146147059,
+      "Sectors": 0.7752810761210566,
+      "Subpillars 1D": 0.4708899566933725,
+      "Subpillars 2D": 0.43451749818464275
+    },
+    "combined": {
+      "all sources": {
+        "Pillars 1D": 0.5657512507622267,
+        "Pillars 2D": 0.6496279898883149,
+        "Sectors": 0.7739073449172029,
+        "Subpillars 1D": 0.4530823982934828,
+        "Subpillars 2D": 0.45371481885312753
+      },
+      "classifier": {
+        "Pillars 1D": 0.5446014147968844,
+        "Pillars 2D": 0.6383732453712995,
+        "Sectors": 0.7796561882828144,
+        "Subpillars 1D": 0.4372525993481895,
+        "Subpillars 2D": 0.4415279956337514
+      },
+      "embedding_classifier": {
+        "Pillars 1D": 0.5637627378658527,
+        "Pillars 2D": 0.6464676864129074,
+        "Sectors": 0.7767694158793073,
+        "Subpillars 1D": 0.456720848207304,
+        "Subpillars 2D": 0.45064607437083404
+      },
+      "knn": {
+        "Pillars 1D": 0.5753558480625013,
+        "Pillars 2D": 0.6575441259343032,
+        "Sectors": 0.7732687883343234,
+        "Subpillars 1D": 0.45441052002821186,
+        "Subpillars 2D": 0.44026610120737997
+      },
+      "label_search": {
+        "Pillars 1D": 0.564519130164356,
+        "Pillars 2D": 0.6483098624259552,
+        "Sectors": 0.7712081071746472,
+        "Subpillars 1D": 0.446711259315144,
+        "Subpillars 2D": 0.4454461282189188
+      },
+      "llm": {
+        "Pillars 1D": 0.5654698757373637,
+        "Pillars 2D": 0.6506466850281291,
+        "Sectors": 0.7738590912352947,
+        "Subpillars 1D": 0.4576383032246701,
+        "Subpillars 2D": 0.46004832664718837
+      },
+      "omikuji": {
+        "Pillars 1D": 0.5783142179430106,
+        "Pillars 2D": 0.6460815922600106,
+        "Sectors": 0.7776937165944382,
+        "Subpillars 1D": 0.4466668950540561,
+        "Subpillars 2D": 0.44766273964834125
+      },
+      "reranker": {
+        "Pillars 1D": 0.5742421077437134,
+        "Pillars 2D": 0.6508023468390624,
+        "Sectors": 0.77687680927882,
+        "Subpillars 1D": 0.45254284921666565,
+        "Subpillars 2D": 0.4473484611065003
+      },
+      "xr_transformer": {
+        "Pillars 1D": 0.5665445050705715,
+        "Pillars 2D": 0.6531356471091591,
+        "Sectors": 0.770182973535815,
+        "Subpillars 1D": 0.44213959725823393,
+        "Subpillars 2D": 0.4355056808473306
+      }
+    },
+    "single": {
+      "classifier": {
+        "Pillars 1D": 0.561141641321061,
+        "Pillars 2D": 0.6382722011102118,
+        "Sectors": 0.7575073346905424,
+        "Subpillars 1D": 0.4291143245515428,
+        "Subpillars 2D": 0.443892154468015
+      },
+      "embedding_classifier": {
+        "Pillars 1D": 0.5053059564232089,
+        "Pillars 2D": 0.5748709257843913,
+        "Sectors": 0.6816357307958453,
+        "Subpillars 1D": 0.3408899034997811,
+        "Subpillars 2D": 0.37870319774432726
+      },
+      "knn": {
+        "Pillars 1D": 0.46447220099333536,
+        "Pillars 2D": 0.5340486617075281,
+        "Sectors": 0.6756879502610994,
+        "Subpillars 1D": 0.35152478875782134,
+        "Subpillars 2D": 0.3831913643886996
+      },
+      "label_search": {
+        "Pillars 1D": 0.16338586159380444,
+        "Pillars 2D": 0.30852099992457277,
+        "Sectors": 0.4249926438280702,
+        "Subpillars 1D": 0.11209016615342354,
+        "Subpillars 2D": 0.13005573795499595
+      },
+      "llm": {
+        "Pillars 1D": 0.5441057473582956,
+        "Pillars 2D": 0.6194355884220959,
+        "Sectors": 0.7444255018099731,
+        "Subpillars 1D": 0.4092322066570103,
+        "Subpillars 2D": 0.40704010674105384
+      },
+      "omikuji": {
+        "Pillars 1D": 0.46785183108568756,
+        "Pillars 2D": 0.5631592201114574,
+        "Sectors": 0.7195150489044841,
+        "Subpillars 1D": 0.3875353437693708,
+        "Subpillars 2D": 0.3883109486494993
+      },
+      "reranker": {
+        "Pillars 1D": 0.4239403810352024,
+        "Pillars 2D": 0.5567820450112798,
+        "Sectors": 0.7011505678328575,
+        "Subpillars 1D": 0.32682251816227176,
+        "Subpillars 2D": 0.3595475486039706
+      },
+      "xr_transformer": {
+        "Pillars 1D": 0.5250443152299381,
+        "Pillars 2D": 0.6088337938111007,
+        "Sectors": 0.7598239810154124,
+        "Subpillars 1D": 0.42757485909273035,
+        "Subpillars 2D": 0.41324689116119195
+      }
+    }
+  },
+  "ki_fsprompt_dev": {
+    "eurlex": {
+      "calls": 7500,
+      "cost_usd": 0.97,
+      "items": 2500,
+      "malformed": 106
+    }
+  },
+  "training_cost_usd": {
+    "eurlex": 8.46,
+    "eurlex_train_only": 3.85,
+    "humset": 0.61
+  }
+}

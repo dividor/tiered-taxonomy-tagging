@@ -1,0 +1,274 @@
+/* The look follows Evidence Lab's: Poppins headings over Open Sans text, square corners, white panels with a light
+   shadow on an off-white page, slate text and one muted blue for our method. Published benchmarks are slate and
+   hatched, so they read as a reference rather than a rival. Layout: a reading column for prose; the results
+   tables run wider and scroll inside their own frame. */
+:root {
+  --bg: #fafbfc; --panel: #ffffff; --fg: #2c3e50; --muted: #5f6d6b; --faint: #8c9a97;
+  --rule: #d1d9d7; --rule-light: #e8eceb; --soft: #f1f4f4;
+  --accent: #4a7490; --accent-2: #a9c6d6; --bar: #9aa8b2; --ref: #475569; --link: #3f6f8c;
+  --c-llm: #e6eef3; --c-llm-fg: #2f5871; --c-tuned: #f3ebe3; --c-tuned-fg: #7a4b22; --c-trained: #e9efe6; --c-trained-fg: #3f5a33;
+  --c-comb: #4a7490; --c-comb-fg: #ffffff; --c-none: #eceff1; --c-none-fg: #475569; --c-mix: #ece9f3; --c-mix-fg: #4f437a;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .05); --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, .1);
+  --shade: rgba(26, 37, 47, .45);
+  --heading: "Poppins", "Helvetica Neue", Arial, sans-serif;
+  --body: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --mono: "SF Mono", Menlo, Monaco, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #141a20; --panel: #1c242c; --fg: #e3e9ec; --muted: #a3b0b4; --faint: #7d8a8e;
+  --rule: #33404a; --rule-light: #283239; --soft: #222c34;
+  --accent: #7aa8be; --accent-2: #3f5f73; --bar: #6c7a84; --ref: #a7b3c2; --link: #8fbad0;
+  --c-llm: #1f3040; --c-llm-fg: #a9c9de; --c-tuned: #3a2c20; --c-tuned-fg: #e6c3a1; --c-trained: #23301f; --c-trained-fg: #bcd3ae;
+  --c-comb: #7aa8be; --c-comb-fg: #141a20; --c-none: #27313a; --c-none-fg: #c3ccd3; --c-mix: #2b2840; --c-mix-fg: #cfc6ee;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4); --shadow-md: 0 4px 10px rgba(0, 0, 0, .45);
+  --shade: rgba(0, 0, 0, .6); color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #141a20; --panel: #1c242c; --fg: #e3e9ec; --muted: #a3b0b4; --faint: #7d8a8e;
+  --rule: #33404a; --rule-light: #283239; --soft: #222c34;
+  --accent: #7aa8be; --accent-2: #3f5f73; --bar: #6c7a84; --ref: #a7b3c2; --link: #8fbad0;
+  --c-llm: #1f3040; --c-llm-fg: #a9c9de; --c-tuned: #3a2c20; --c-tuned-fg: #e6c3a1; --c-trained: #23301f; --c-trained-fg: #bcd3ae;
+  --c-comb: #7aa8be; --c-comb-fg: #141a20; --c-none: #27313a; --c-none-fg: #c3ccd3; --c-mix: #2b2840; --c-mix-fg: #cfc6ee;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4); --shadow-md: 0 4px 10px rgba(0, 0, 0, .45);
+  --shade: rgba(0, 0, 0, .6); color-scheme: dark; }
+body { background: var(--bg); color: var(--fg); font: 16px/1.65 var(--body); -webkit-font-smoothing: antialiased; }
+main { max-width: 1160px; margin: 0 auto; padding-block: 48px 88px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 64px; }
+.col { max-width: 760px; display: grid; gap: 16px; min-width: 0; }
+section { display: grid; gap: 20px; min-width: 0; }
+h1, h2, h3, h4 { font-family: var(--heading); font-weight: 600; color: var(--fg); text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(30px, 5vw, 42px); line-height: 1.15; letter-spacing: -0.01em; }
+h2 { font-size: 26px; line-height: 1.25; }
+h3 { font-size: 18px; line-height: 1.35; margin-top: 12px; }
+h4 { font-size: 15px; line-height: 1.4; margin-top: 8px; }
+p, li { margin: 0; }
+a { color: var(--link); text-underline-offset: 2px; }
+a:hover { color: var(--accent); }
+.eyebrow { font: 600 12px/1.3 var(--body); letter-spacing: .06em; text-transform: uppercase; color: var(--faint); }
+.lede { font-size: 19px; line-height: 1.6; color: var(--fg); }
+.muted, small { color: var(--muted); }
+
+/* The three headline numbers, as Evidence Lab's stat cards: the number first, then what it is compared with,
+   then what it is. Each card spans four rows of a shared grid, so the numbers, the comparisons and the labels
+   line up across the cards however the text in any of them wraps. */
+.answer { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+  column-gap: 16px; row-gap: 0; }
+.answer div { background: var(--panel); box-shadow: var(--shadow); border-left: 4px solid var(--accent);
+  padding: 20px 22px; display: grid; grid-row: span 4; grid-template-rows: subgrid; row-gap: 6px;
+  margin-bottom: 16px; }
+.answer div.llm { border-left-color: var(--ref); }
+.answer strong { font: 700 38px/1 var(--heading); font-variant-numeric: tabular-nums; color: var(--fg); }
+.answer strong.pass { color: var(--accent); }
+.answer .vs { font: 400 14px/1.35 var(--body); color: var(--muted); }
+.answer .vs b { font-weight: 600; color: var(--fg); font-variant-numeric: tabular-nums; }
+.answer-note { margin-top: -4px; }
+.answer .eyebrow { margin-top: 6px; color: var(--muted); }
+.answer p { font-size: 14px; line-height: 1.55; color: var(--muted); }
+
+/* The key to the tables: two panels side by side when there is room, each a list of terms and meanings. */
+.key { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 16px; }
+.key > div { background: var(--panel); box-shadow: var(--shadow); padding: 20px 22px; }
+.key h3 { margin: 0 0 12px; font-size: 15px; }
+.key dl { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: 10px 16px; margin: 0; font-size: 14px;
+  line-height: 1.5; align-items: baseline; }
+.key dt { font-weight: 600; } .key dd { margin: 0; color: var(--muted); }
+
+/* Ranked bars. */
+ol.ranked { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+ol.ranked li { display: grid; grid-template-columns: minmax(0, 16rem) minmax(0, 1fr) 4.2rem; gap: 14px; align-items: center; }
+.lbl { display: grid; line-height: 1.3; font-size: 14px; } .lbl small { font-size: 12.5px; }
+.bar { display: block; height: 12px; background: var(--soft); overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--bar); }
+.bar.lead i { background: var(--accent); } .bar.lead2 i { background: var(--accent-2); }
+.bar.ref i { background: repeating-linear-gradient(135deg, var(--ref) 0 4px, transparent 4px 7px); outline: 1.5px solid var(--ref); outline-offset: -1.5px; }
+ol.ranked b, td b { font: 600 14px var(--body); font-variant-numeric: tabular-nums; text-align: right; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--muted); }
+.legend span::before { content: ""; display: inline-block; width: 12px; height: 12px; margin-right: 6px; vertical-align: -1px; background: var(--bar); }
+.legend .l1::before { background: var(--accent); } .legend .l2::before { background: var(--accent-2); }
+.legend .lr::before { background: repeating-linear-gradient(135deg, var(--ref) 0 3px, transparent 3px 5px); outline: 1.5px solid var(--ref); outline-offset: -1.5px; }
+
+/* Tables, as Evidence Lab's: a light head with a heavier rule under it, headings in Poppins. */
+.scroll { overflow-x: auto; background: var(--panel); box-shadow: var(--shadow); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { padding: 10px 12px; border-bottom: 1px solid var(--rule-light); text-align: left; vertical-align: middle; }
+thead th { font: 600 12.5px/1.35 var(--heading); color: var(--fg); background: var(--soft); border-bottom-color: var(--rule); }
+thead tr:last-child th { border-bottom: 2px solid var(--rule); }
+thead th.num { min-width: 4.6rem; }
+th.group { text-align: center; font: 600 11px/1.3 var(--body); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+th[data-sort] { cursor: pointer; user-select: none; }
+th[data-sort]:hover, th[data-sort]:focus-visible { color: var(--accent); }
+th.sorted::after { content: " ↓"; } th.sorted.asc::after { content: " ↑"; }
+button.info { all: unset; position: relative; display: inline-grid; place-items: center; width: 15px; height: 15px;
+  margin-left: 5px; vertical-align: 1px; border: 1px solid currentColor; border-radius: 50%; color: var(--faint);
+  font: italic 600 10.5px/1 Georgia, "Times New Roman", serif; cursor: help; text-transform: none; letter-spacing: 0; }
+button.info::after { content: ""; position: absolute; inset: -9px; }
+button.info:hover, button.info:focus-visible { color: var(--accent); }
+button.info:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tip { position: fixed; z-index: 30; max-width: min(320px, calc(100vw - 32px)); padding: 10px 14px;
+  background: #1a252f; color: #ffffff; font: 400 13px/1.45 var(--body); text-align: left; text-transform: none;
+  letter-spacing: 0; box-shadow: 0 4px 12px rgba(0, 0, 0, .15); pointer-events: none; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:hover td { background: var(--soft); }
+td.num, th.num { text-align: right; }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.num small { display: block; font-size: 11px; }
+td.cost { font-size: 13px; color: var(--muted); }
+td.name { min-width: 15rem; line-height: 1.35; }
+td.name .sub { display: block; font-size: 12.5px; color: var(--muted); margin-top: 3px; }
+button.tech { all: unset; cursor: pointer; font-weight: 600; color: var(--fg); border-bottom: 1px dotted var(--faint); }
+button.tech:hover { color: var(--accent); border-bottom-color: var(--accent); }
+button.tech:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.chip { display: inline-block; font: 600 11.5px/1.75 var(--body); padding: 0 8px; white-space: nowrap; }
+.k-llm { background: var(--c-llm); color: var(--c-llm-fg); } .k-tuned { background: var(--c-tuned); color: var(--c-tuned-fg); }
+.k-trained { background: var(--c-trained); color: var(--c-trained-fg); } .k-comb { background: var(--c-comb); color: var(--c-comb-fg); }
+.k-none { background: var(--c-none); color: var(--c-none-fg); } .k-mix { background: var(--c-mix); color: var(--c-mix-fg); }
+td.barcell { min-width: 10rem; white-space: nowrap; }
+td.barcell .bar { display: inline-block; width: calc(100% - 3.2rem); vertical-align: middle; }
+td.barcell b { display: inline-block; width: 2.8rem; vertical-align: middle; }
+
+/* Findings: each a short heading and a paragraph, divided by a rule rather than bullets. */
+ul.findings { list-style: none; padding: 0; margin: 0; display: grid; }
+ul.findings li { padding: 16px 0; border-top: 1px solid var(--rule-light); }
+ul.findings li:first-child { border-top: 0; padding-top: 0; }
+ul.findings strong { display: block; font: 600 16px/1.4 var(--heading); margin-bottom: 4px; }
+.ci { color: var(--muted); font-size: 13.5px; }
+.note { font-size: 14px; line-height: 1.6; color: var(--muted); max-width: 760px; }
+details.more { max-width: 760px; }
+details.more summary { cursor: pointer; font-size: 14px; font-weight: 600; color: var(--accent); width: fit-content; }
+details.more summary:hover { color: var(--fg); }
+details.more[open] summary { margin-bottom: 8px; }
+code { font: 13.5px var(--mono); }
+ol.refs { padding-left: 1.4em; margin: 0; display: grid; gap: 12px; font-size: 15px; }
+ol.refs span, .card ul.refs span { display: block; color: var(--muted); font-size: 13.5px; }
+
+/* The method cards and data windows. */
+dialog { border: 1px solid var(--rule); background: var(--panel); color: var(--fg); padding: 0; box-shadow: var(--shadow-md);
+  width: min(620px, calc(100vw - 32px)); max-height: calc(100vh - 48px); }
+dialog::backdrop { background: var(--shade); }
+.card { padding: 26px 28px 22px; display: grid; gap: 22px; }
+.card header { display: grid; gap: 8px; justify-items: start; padding-right: 2.2rem; }
+.card h2 { font-size: 24px; line-height: 1.25; }
+.card .summary { font-size: 16px; line-height: 1.55; }
+.card h3 { font: 600 11.5px/1.2 var(--body); letter-spacing: .07em; text-transform: uppercase; color: var(--faint);
+  margin: 0 0 10px; }
+.card h3 .hint { text-transform: none; letter-spacing: 0; font: 400 12px var(--body); margin-left: 6px; }
+ol.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: var(--cols);
+  align-items: stretch; }
+ol.steps li { background: var(--c-llm); color: var(--c-llm-fg); font-size: 13px; font-weight: 600; line-height: 1.3;
+  padding: 10px; display: flex; align-items: center; justify-content: center; text-align: center; }
+ol.steps li.end { background: var(--soft); color: var(--muted); font-weight: 400; }
+ol.steps li.out { background: var(--fg); color: var(--panel); font-weight: 600; }
+ol.steps li.arrow { background: none; color: var(--faint); padding: 0 5px; font-weight: 400; }
+.combines ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.combines li.chip { font-size: 12.5px; padding: 2px 10px; white-space: normal; }
+.clues p { font-size: 14px; color: var(--muted); }
+.clues dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 7px 14px; margin: 8px 0 10px;
+  font-size: 14px; line-height: 1.45; }
+.clues dt { font-weight: 600; }
+.clues dt::before { content: ""; display: inline-block; width: 7px; height: 7px; background: var(--accent);
+  margin-right: 8px; vertical-align: 2px; }
+.clues dd { margin: 0; }
+.clues .scorer { font-size: 13.5px; }
+.scores { display: grid; gap: 8px; }
+.score { display: grid; grid-template-columns: 3.6rem minmax(0, 1fr) 2.6rem; gap: 10px; align-items: center; font-size: 13.5px; }
+.score .lbl { color: var(--muted); }
+.score .val { font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+.track { position: relative; height: 12px; background: var(--soft); }
+.track i { position: absolute; inset: 0 auto 0 0; background: var(--bar); }
+.track b { position: absolute; top: -4px; bottom: -4px; width: 2px; margin-left: -1px; background: var(--accent); }
+dl.tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 0; }
+dl.tiles div { background: var(--soft); padding: 10px 12px; display: grid; gap: 3px; align-content: start; }
+dl.tiles dt { font-size: 11.5px; color: var(--muted); }
+dl.tiles dd { margin: 0; font-size: 14px; font-weight: 600; line-height: 1.3; }
+.card .settings { font-size: 13px; color: var(--muted); margin-top: -10px; }
+.card .differs p { font-size: 14.5px; }
+.card ul.refs { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; font-size: 14px; }
+.card .nb { font-size: 12.5px; color: var(--muted); }
+.card .close { position: absolute; top: 14px; right: 14px; font: 400 24px/1 var(--body); background: none; border: 0;
+  color: var(--muted); cursor: pointer; padding: 4px 10px; }
+.card .close:hover, .card .close:focus-visible { color: var(--fg); background: var(--soft); }
+@media (max-width: 560px) {
+  ol.ranked li { grid-template-columns: minmax(0, 1fr) 4rem; } ol.ranked li .bar { grid-column: 1 / -1; grid-row: 2; }
+  .key dl { grid-template-columns: 1fr; gap: 2px; } .key dd { margin-bottom: 10px; }
+  .answer strong { font-size: 34px; }
+  .card { padding: 20px 18px; } .clues dl { grid-template-columns: 1fr; gap: 2px; } .clues dd { margin-bottom: 6px; }
+  ol.steps { grid-template-columns: 1fr; justify-items: stretch; } ol.steps li.arrow { transform: rotate(90deg); padding: 2px 0; }
+  dl.tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (prefers-reduced-motion: no-preference) { dialog[open] { animation: rise .16s ease-out; } @keyframes rise { from { transform: translateY(6px); } } }
+
+/* The near-miss example: a taxonomy path read left to right, the leaf where exact credit is lost. */
+.nearmiss { margin: 0; background: var(--panel); box-shadow: var(--shadow); padding: 20px 22px; display: grid; gap: 14px; }
+.nearmiss h3 { margin: 0 0 4px; font-size: 16px; }
+.nearmiss p, .nearmiss li { font-size: 14px; max-width: 76ch; }
+.nearmiss ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+ol.path { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+ol.path li { position: relative; background: var(--c-trained); color: var(--c-trained-fg); padding: 10px 12px;
+  display: grid; gap: 4px; align-content: start; font-size: 13.5px; line-height: 1.3; }
+ol.path li:not(:last-child)::after { content: "›"; position: absolute; right: -10px; top: 50%; transform: translateY(-50%);
+  color: var(--faint); font-size: 16px; }
+ol.path .t { font: 600 11px/1 var(--body); letter-spacing: .06em; text-transform: uppercase; opacity: .8; }
+ol.path .lab { font-weight: 600; overflow-wrap: anywhere; } ol.path .lab small { font-weight: 400; color: inherit; opacity: .75; }
+ol.path .lab .who { display: block; }
+ol.path .ok::before { content: "✓ "; } ol.path .no::before { content: "✗ "; }
+ol.path .ok, ol.path .no { font-size: 12.5px; }
+ol.path li.leaf { background: var(--c-tuned); color: var(--c-tuned-fg); }
+@media (max-width: 560px) { ol.path { grid-template-columns: repeat(2, minmax(0, 1fr)); } ol.path li::after { display: none; } }
+.scorenote { font-size: 12.5px; color: var(--muted); margin-top: 8px; }
+
+/* The two data windows: buttons under each table heading, a label tree with a finder, and example records. */
+.data-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: -6px; }
+button.data { font: 600 13.5px/1.2 var(--body); color: var(--accent); background: var(--panel); border: 1px solid var(--rule);
+  padding: 8px 14px; cursor: pointer; }
+button.data:hover, button.data:focus-visible { border-color: var(--accent); background: var(--soft); }
+.browser { max-width: 760px; }
+dl.tiercount { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; }
+dl.tiercount div { background: var(--soft); padding: 6px 10px; display: grid; gap: 2px; min-width: 4.4rem; }
+dl.tiercount dt { font: 600 11px/1 var(--body); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+dl.tiercount dd { margin: 0; font: 600 15px/1.2 var(--body); font-variant-numeric: tabular-nums; }
+.finder { display: grid; gap: 6px; }
+.finder label { font-size: 13px; font-weight: 600; }
+.finder input { font: 15px var(--body); color: var(--fg); background: var(--bg); border: 1px solid var(--rule);
+  padding: 9px 12px; width: 100%; box-sizing: border-box; }
+.finder input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.browser .note { font-size: 13px; color: var(--muted); }
+.tag { display: inline-flex; align-items: baseline; gap: 7px; min-width: 0; }
+.tag .t { font: 600 10.5px/1 var(--body); color: var(--muted); background: var(--soft); padding: 3px 5px; flex: none; }
+.tag .n { overflow-wrap: anywhere; }
+ul.tree, ul.tree ul { list-style: none; margin: 0; padding: 0; }
+ul.tree ul { padding-left: 22px; border-left: 1px solid var(--rule); margin-left: 9px; }
+ul.tree .row { display: flex; align-items: baseline; gap: 8px; width: 100%; text-align: left; font: 14px/1.4 var(--body);
+  color: var(--fg); background: none; border: 0; padding: 5px 6px; }
+ul.tree button.row { cursor: pointer; } ul.tree button.row:hover, ul.tree button.row:focus-visible { background: var(--soft); }
+ul.tree .twist { width: 12px; flex: none; color: var(--faint); } ul.tree .twist.leaf::before { content: "·"; }
+ul.tree .used, ol.hits .used { margin-left: auto; font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; flex: none; }
+ul.tree .kids { font-size: 12px; color: var(--muted); flex: none; }
+ol.hits { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+ol.hits li { display: flex; gap: 12px; align-items: baseline; padding: 6px 4px; border-bottom: 1px solid var(--rule-light); font-size: 14px; }
+.crumbs { color: var(--muted); min-width: 0; overflow-wrap: anywhere; } .crumbs .sep { margin: 0 6px; }
+.crumbs .here { color: var(--fg); font-weight: 600; }
+.records { display: grid; gap: 22px; }
+article.record { display: grid; gap: 10px; border-top: 1px solid var(--rule); padding-top: 18px; }
+article.record .meta { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; color: var(--muted); }
+article.record .meta a { color: var(--link); }
+blockquote.text { margin: 0; padding: 12px 14px; background: var(--soft); border-left: 3px solid var(--accent);
+  font-size: 14px; line-height: 1.6; white-space: pre-line; overflow-wrap: anywhere; }
+ul.paths, ul.paths ul { list-style: none; margin: 0; padding: 0; }
+ul.paths ul { padding-left: 20px; border-left: 1px solid var(--rule); margin-left: 10px; }
+ul.paths li { padding-top: 4px; font-size: 14px; }
+.tag.above .n { color: var(--muted); }
+.tag.given .n { font-weight: 600; background: var(--c-llm); color: var(--c-llm-fg); padding: 1px 6px; }
+.marks { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: baseline; }
+td.num.none { color: var(--faint); font-style: italic; }
+
+/* Label frequency in the labels window: one horizontal bar per band of training share. */
+.freq { display: grid; gap: 8px; }
+.freq h3 { margin: 0; }
+.freq p { font-size: 13.5px; color: var(--muted); }
+.freqbars { display: grid; gap: 6px; }
+.fbar { display: grid; grid-template-columns: 7.2rem minmax(0, 1fr) 9.5rem; gap: 10px; align-items: center; font-size: 13px; }
+.fbar .lbl { color: var(--muted); }
+.fbar .track { height: 12px; background: var(--soft); overflow: hidden; }
+.fbar .track i { display: block; height: 100%; background: var(--bar); }
+.fbar.never .track i { background: var(--rule); }
+.fbar .val { font-size: 12.5px; font-variant-numeric: tabular-nums; text-align: right; }
+@media (max-width: 560px) { .fbar { grid-template-columns: 5.6rem minmax(0, 1fr); } .fbar .val { grid-column: 1 / -1; text-align: left; } }

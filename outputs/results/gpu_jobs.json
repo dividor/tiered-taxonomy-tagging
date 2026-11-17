@@ -1,0 +1,136 @@
+{
+ "prices": {
+  "t4-small": 0.4,
+  "a10g-small": 1.0,
+  "a10g-large": 1.5
+ },
+ "runs": {
+  "xr_transformer_eurlex": {
+   "job": "6aedff880e0338d1bb81b215",
+   "flavor": "a10g-large",
+   "hours": 1.88,
+   "base": "bert-base-uncased"
+  },
+  "classifier_humset": {
+   "job": "6aedfc94c78863f9c634b57b",
+   "flavor": "a10g-small",
+   "hours": 0.61,
+   "base": "nlp-thedeep/humbert"
+  },
+  "classifier_eurlex": {
+   "job": "6aedfc96c78863f9c634b583",
+   "flavor": "a10g-small",
+   "hours": 1.03,
+   "base": "nlpaueb/legal-bert-base-uncased"
+  },
+  "classifier_eurlex_newer": {
+   "job": "6aedfc95c78863f9c634b57d",
+   "flavor": "a10g-small",
+   "hours": 1.09,
+   "base": "nlpaueb/legal-bert-base-uncased"
+  },
+  "reranker_humset": {
+   "job": "6aee01c9c78863f9c634bf53",
+   "flavor": "a10g-small",
+   "hours": 3.27,
+   "base": "BAAI/bge-reranker-v2-m3"
+  },
+  "reranker_eurlex_newer": {
+   "job": "6aee01c70e0338d1bb81b583",
+   "flavor": "a10g-small",
+   "hours": 4.0,
+   "base": "BAAI/bge-reranker-v2-m3"
+  },
+  "llm_humset": {
+   "job": "6aee01ccc78863f9c634bf57",
+   "flavor": "a10g-small",
+   "hours": 1.78,
+   "base": "Qwen/Qwen2.5-7B"
+  },
+  "llm_eurlex_newer": {
+   "job": "6aee01cec78863f9c634bf5e",
+   "flavor": "a10g-small",
+   "hours": 3.37,
+   "base": "Qwen/Qwen2.5-7B"
+  },
+  "gliner_humset": {
+   "job": "6af329adab34849891ac01a9",
+   "flavor": "a10g-small",
+   "hours": 2.7,
+   "base": "fastino/GLiNER2.5-multi-Decide",
+   "also_paid": [
+    {
+     "job": "6af32903ab34849891abffde",
+     "flavor": "a10g-small",
+     "hours": 0.02,
+     "why": "a first launch that ran out of GPU memory"
+    }
+   ]
+  },
+  "gliner_eurlex_newer": {
+   "job": "6af32f789737d9a9e090bb1c",
+   "flavor": "a10g-small",
+   "hours": 2.46,
+   "base": "fastino/GLiNER2.5-Decide"
+  },
+  "humbert_reproduction_full": {
+   "job": "6af50feb9737d9a9e0939e9c",
+   "flavor": "a10g-small",
+   "hours": 1.2,
+   "base": "nlp-thedeep/humbert"
+  },
+  "humbert_reproduction_full_v1": {
+   "job": "6af5269c9737d9a9e093aa34",
+   "flavor": "a10g-small",
+   "hours": 1.13,
+   "base": "nlp-thedeep/humbert",
+   "also_paid": [
+    {
+     "job": "6af524ddab34849891aec1aa",
+     "flavor": "t4-small",
+     "hours": 0.11,
+     "why": "a smoke test on a small share"
+    }
+   ]
+  },
+  "classifier_humset_v2": {
+   "job": "6af74d3b29dd05ff03654fe0",
+   "flavor": "a10g-small",
+   "hours": 0.67,
+   "base": "nlp-thedeep/humbert"
+  },
+  "llm_humset_v2": {
+   "job": "6af74d3e23985fb9cd804082",
+   "flavor": "a10g-small",
+   "hours": 1.67,
+   "base": "Qwen/Qwen2.5-7B"
+  },
+  "gliner_humset_v2": {
+   "job": "6af74d4123985fb9cd804088",
+   "flavor": "a10g-small",
+   "hours": 2.8,
+   "base": "fastino/GLiNER2.5-multi-Decide"
+  },
+  "xr_transformer_humset_v2": {
+   "job": "6af74d4423985fb9cd804090",
+   "flavor": "a10g-small",
+   "hours": 1.38,
+   "base": "bert-base-multilingual-cased"
+  },
+  "reranker_humset_v2": {
+   "job": "6af7522a29dd05ff036558f4",
+   "flavor": "a10g-small",
+   "hours": 3.0,
+   "base": "BAAI/bge-reranker-v2-m3"
+  },
+  "humbert_reproduction_full_v2_rankings": {
+   "job": "6af5be5837daa033b628335b",
+   "flavor": "a10g-small",
+   "hours": 1.26,
+   "base": "nlp-thedeep/humbert"
+  }
+ },
+ "unrecorded": [
+  "xr_transformer_humset"
+ ]
+}

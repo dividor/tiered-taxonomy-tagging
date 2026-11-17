@@ -1,0 +1,51 @@
+"""Tests for the report's citations of papers."""
+
+from __future__ import annotations
+
+import pytest
+
+from tiered_taxonomy.report_papers import author_year, cite, cited_methods, with_citations
+
+REFS = {
+    "one": {"title": "Solo", "authors": "Ada Lovelace", "year": 2024},
+    "two": {"title": "Pair", "authors": "Lisa Kluge and Maximilian Kähler", "year": 2025},
+    "many": {"title": "Team", "authors": "Nicolò Tamagnone, Selim Fekih and Navid Rekabsaz", "year": 2023},
+    "others": {"title": "Big", "authors": "Daoping Wu, Dong Wang and others", "year": 2026},
+    "undated": {"title": "Software", "authors": "Amazon"},
+}
+
+
+def test_author_year_names_one_two_or_the_first_of_many_authors() -> None:
+    assert author_year(REFS["one"]) == "Lovelace, 2024"
+    assert author_year(REFS["two"]) == "Kluge and Kähler, 2025"
+    assert author_year(REFS["many"]) == "Tamagnone et al., 2023"
+    assert author_year(REFS["others"]) == "Wu et al., 2026"
+
+
+def test_a_source_without_a_year_cannot_be_cited() -> None:
+    with pytest.raises(ValueError, match="no year"):
+        author_year(REFS["undated"])
+    with pytest.raises(ValueError, match="at least one"):
+        cite()
+
+
+def test_with_citations_writes_out_one_or_several_sources_and_refuses_unknown_ones() -> None:
+    assert (
+        with_citations("as the paper {cite:many} says", REFS) == "as the paper (Tamagnone et al., 2023) says"
+    )
+    assert with_citations("{cite:two,others}", REFS) == "(Kluge and Kähler, 2025; Wu et al., 2026)"
+    with pytest.raises(KeyError, match="nope"):
+        with_citations("{cite:nope}", REFS)
+
+
+def test_cited_methods_writes_out_citations_in_text_fields_only() -> None:
+    methods = {
+        "references": REFS,
+        "methods": {"m": {"sub": "in {cite:one}", "differs": "the paper {cite:two}", "refs": ["one"]}},
+    }
+    made = cited_methods(methods)["methods"]["m"]
+    assert made == {
+        "sub": "in (Lovelace, 2024)",
+        "differs": "the paper (Kluge and Kähler, 2025)",
+        "refs": ["one"],
+    }
