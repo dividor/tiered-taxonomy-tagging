@@ -321,8 +321,12 @@ def test_the_opening_and_findings_name_who_leads_humset_by_exact_labels(inputs: 
     clause = f"though {top.name} edges it by exact labels, {top.f1:.3f} to {combined.f1:.3f}"
     assert exact_lead(excerpts) == clause
     assert exact_lead([combined, top]) == "and by exact labels"
+    assert exact_lead(excerpts, scores=False) == f"though {top.name} edges it by exact labels"
     page = " ".join(build_page(REPO).split())
-    assert page.count(clause) == 2
+    assert page.count(clause) == 1
+    lede = page[page.index("<p class=lede>") : page.index("</p>", page.index("<p class=lede>"))]
+    assert f"though {top.name} edges it by exact labels." in lede
+    assert not re.search(r"\d\.\d{3}", lede)
     assert (
         "several trained models each suggest labels, and a scorer trained on documents they never saw" in page
     )

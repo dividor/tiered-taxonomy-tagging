@@ -280,14 +280,15 @@ def as_share(points: float) -> float:
     return points / 100
 
 
-def exact_lead(excerpts: Sequence[Row]) -> str:
+def exact_lead(excerpts: Sequence[Row], scores: bool = True) -> str:
     """Return the clause on who leads HumSet 2.0.0 by exact labels, naming the leader when it is not the
-    combined method."""
+    combined method, with both scores unless `scores` is false, as in the summary above the tables."""
     top = excerpts[0]
     if top.kind == "Combined":
         return "and by exact labels"
     combined = next(r for r in excerpts if r.kind == "Combined")
-    return f"though {esc(top.name)} edges it by exact labels, {top.f1:.3f} to {combined.f1:.3f}"
+    clause = f"though {esc(top.name)} edges it by exact labels"
+    return f"{clause}, {top.f1:.3f} to {combined.f1:.3f}" if scores else clause
 
 
 def header(inputs: Inputs, laws: Sequence[Row], excerpts: Sequence[Row]) -> str:
@@ -308,8 +309,8 @@ def header(inputs: Inputs, laws: Sequence[Row], excerpts: Sequence[Row]) -> str:
   and on humanitarian excerpts. The most accurate was our combined method: several trained models each
   suggest labels, and a scorer trained on documents they never saw decides which to keep. Which models it
   draws on is chosen for each dataset. It led on the EU laws, and on HumSet 2.0.0 by the HumBERT paper's
-  measure, {exact_lead(excerpts)}. Methods that prompt an LLM came well behind, though on the EU laws they
-  found more of the rare labels.</p>
+  measure, {exact_lead(excerpts, scores=False)}. Methods that prompt an LLM came well behind, though on the
+  EU laws they found more of the rare labels.</p>
 </header>
 <section class=col aria-label="The short answer"><div class=answer>
   <div><strong class=pass>{law_score:.3f}</strong>
