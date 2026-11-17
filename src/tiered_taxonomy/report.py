@@ -228,9 +228,14 @@ def _ranked_rows(inputs: Inputs, test_set: str) -> list[Row]:
     return rows
 
 
+PROPER_NAMES = frozenset({"Omikuji"})
+
+
 def plain_case(name: str) -> str:
-    """Lower a name's first letter for use mid-sentence, unless it starts an acronym (XR-Transformer)."""
-    return name[0].lower() + name[1:] if name[1:2].islower() else name
+    """Lower a name's first letter for use mid-sentence, unless it starts an acronym (XR-Transformer) or a
+    proper name (Omikuji)."""
+    first = name.split(",")[0].split(" ")[0]
+    return name[0].lower() + name[1:] if name[1:2].islower() and first not in PROPER_NAMES else name
 
 
 def combined_name(inputs: Inputs, key: str, test_set: str = "humset") -> tuple[str, str]:
@@ -240,16 +245,22 @@ def combined_name(inputs: Inputs, key: str, test_set: str = "humset") -> tuple[s
         names = [plain_case(method_name(inputs.methods, source, test_set)) for source in sources]
         listed = f"{', '.join(names[:-1])} and {names[-1]}" if len(names) > 1 else names[0]
         if test_set == HUMSET_V2:
-            return "Combined method", f"weighs {listed}, chosen on version 2.0.0's development excerpts"
+            return "Combined method", f"Weighs {listed}, chosen on version 2.0.0's development excerpts"
         first = inputs.results["10_combined_method"]["humset"]["sources"]
         second = inputs.results["11_second_attempt"]["humset"]["sources"]
         if sorted(first) == sorted(second):
-            return "Combined method", f"weighs {listed}; the same in both attempts"
-        return "Combined method", f"weighs {listed}, the second attempt's choice"
+            return "Combined method", f"Weighs {listed}; the same in both attempts"
+        return "Combined method", f"Weighs {listed}, the second attempt's choice"
     attempt, scope = key.split(":")
-    if attempt == "combined_first":
-        return f"Combined method, first attempt, {SCOPE[scope]}", "the version chosen in notebook 10"
     run = "eurlex" if scope == "newer" else "eurlex_train_only"
+    if attempt == "combined_first":
+        sources = inputs.results["10_combined_method"][run]["sources"]
+        names = [plain_case(method_name(inputs.methods, source, "eurlex")) for source in sources]
+        listed = f"{', '.join(names[:-1])} and {names[-1]}" if len(names) > 1 else names[0]
+        return (
+            f"Combined method, first attempt, {SCOPE[scope]}",
+            f"Weighs {listed}, chosen on development laws",
+        )
     added = sorted(
         set(inputs.results["11_second_attempt"][run]["sources"])
         - set(inputs.results["10_combined_method"][run]["sources"])
@@ -257,7 +268,7 @@ def combined_name(inputs: Inputs, key: str, test_set: str = "humset") -> tuple[s
     parts = [method_name(inputs.methods, a, "eurlex") for a in added]
     if inputs.results["11_second_attempt"][run]["priors"]:
         parts.append("each label's recent history")
-    return f"Combined method, second attempt, {SCOPE[scope]}", "adds " + " and ".join(parts)
+    return f"Combined method, second attempt, {SCOPE[scope]}", "Adds " + " and ".join(parts)
 
 
 def _combined_rows(inputs: Inputs, test_set: str) -> list[Row]:

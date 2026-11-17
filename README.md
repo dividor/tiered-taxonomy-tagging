@@ -43,18 +43,18 @@ Every number below comes from `outputs/results`, through the same code as the [i
 
 | Method | Version | Mean R-Precision |
 | --- | --- | ---: |
-| Combined method, second attempt | with newer laws | 0.640 |
-| Combined method, first attempt | with newer laws | 0.624 |
-| Combined method, second attempt | training laws only | 0.610 |
-| Combined method, first attempt | training laws only | 0.600 |
-| Fine-tuned Legal-BERT | with newer laws | 0.529 |
-| Fine-tuned Legal-BERT | training laws only | 0.500 |
-| BERT, published | the benchmark to beat (Chalkidis et al., 2021) | 0.484 |
-| XR-Transformer | training laws only | 0.474 |
-| Omikuji | training laws only | 0.471 |
-| Embedding classifier | training laws only | 0.459 |
-| Similar documents | training laws only | 0.424 |
-| Label search | no training | 0.139 |
+| Combined method, second attempt | With newer laws | 0.640 |
+| Combined method, first attempt | With newer laws | 0.624 |
+| Combined method, second attempt | Training laws only | 0.610 |
+| Combined method, first attempt | Training laws only | 0.600 |
+| Fine-tuned Legal-BERT | With newer laws | 0.529 |
+| Fine-tuned Legal-BERT | Training laws only | 0.500 |
+| BERT, published | The benchmark to beat (Chalkidis et al., 2021) | 0.484 |
+| XR-Transformer | Training laws only | 0.474 |
+| Omikuji | Training laws only | 0.471 |
+| Embedding classifier | Training laws only | 0.459 |
+| Similar documents | Training laws only | 0.424 |
+| Label search | No training | 0.139 |
 
 **HumSet 2.0.0: macro F1 by label group on all 12,896 test excerpts**, the measure the HumBERT paper reports. Its published figures have two decimals; their mean is worked out from them.
 

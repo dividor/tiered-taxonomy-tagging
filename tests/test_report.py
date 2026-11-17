@@ -10,7 +10,7 @@ from pathlib import Path
 import pytest
 
 from tiered_taxonomy import report as rp
-from tiered_taxonomy.report_page import build_page, published_measure
+from tiered_taxonomy.report_page import benchmark_rows, build_page, published_measure
 
 REPO = Path(__file__).resolve().parents[1]
 
@@ -89,6 +89,24 @@ def test_near_miss_panel_names_the_tier_of_every_label(inputs: rp.Inputs) -> Non
     assert "Exact label" not in panel
 
 
+def test_every_subtitle_starts_with_a_capital(inputs: rp.Inputs) -> None:
+    subs = {
+        f"{t} {r.name}": r.sub for t in ("eurlex", "humset", rp.HUMSET_V2) for r in rp.method_rows(inputs, t)
+    }
+    laws, excerpts = benchmark_rows(inputs)
+    subs |= {f"benchmark {name}": sub for name, sub, _, _ in [*laws, *excerpts]}
+    for name, sub in subs.items():
+        assert not sub or sub[0].isupper(), (name, sub)
+
+
+def test_first_combined_attempt_says_what_it_weighs(inputs: rp.Inputs) -> None:
+    _, sub = rp.combined_name(inputs, "combined_first:newer", "eurlex")
+    assert sub == (
+        "Weighs fine-tuned Legal-BERT, similar documents, label search, fine-tuned small LLM and fine-tuned "
+        "reranker, chosen on development laws"
+    )
+
+
 def test_rows_are_best_first_with_distinct_names(inputs: rp.Inputs) -> None:
     for test_set in ("eurlex", "humset"):
         rows = rp.method_rows(inputs, test_set)
@@ -103,8 +121,8 @@ def test_combined_rows_are_named_by_attempt_and_training_data(inputs: rp.Inputs)
     names = {r.key: (r.name, r.sub) for r in rp.method_rows(inputs, "eurlex") if r.method == "combined"}
     assert names["combined_first:newer"][0] == "Combined method, first attempt, with newer laws"
     assert names["combined_second:train_only"][0] == "Combined method, second attempt, training laws only"
-    assert names["combined_second:newer"][1] == "adds GLiNER2.5 and each label's recent history"
-    assert names["combined_second:train_only"][1] == "adds each label's recent history"
+    assert names["combined_second:newer"][1] == "Adds GLiNER2.5 and each label's recent history"
+    assert names["combined_second:train_only"][1] == "Adds each label's recent history"
 
 
 def test_duplicate_names_raise(inputs: rp.Inputs) -> None:
@@ -187,9 +205,11 @@ def test_tier_mix_explains_the_gap_and_raises_when_it_no_longer_holds(inputs: rp
 def test_the_humanitarian_combined_row_says_what_it_weighs(inputs: rp.Inputs) -> None:
     (row,) = [r for r in rp.method_rows(inputs, "humset") if r.kind == "Combined"]
     assert row.sub == (
-        "weighs fine-tuned HumBERT, label search and XR-Transformer; the same in both attempts"
+        "Weighs fine-tuned HumBERT, label search and XR-Transformer; the same in both attempts"
     )
     assert rp.plain_case("XR-Transformer") == "XR-Transformer"
+    assert rp.plain_case("Omikuji, with newer laws") == "Omikuji, with newer laws"
+    assert rp.plain_case("Similar documents") == "similar documents"
     second = dict(inputs.results["11_second_attempt"])
     second["humset"] = {**second["humset"], "sources": ["classifier"]}
     changed = rp.Inputs({**inputs.results, "11_second_attempt": second}, inputs.config, inputs.methods)

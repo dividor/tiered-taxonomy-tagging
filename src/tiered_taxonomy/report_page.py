@@ -615,7 +615,7 @@ def benchmark_rows(inputs: Inputs) -> tuple[Bars, Bars]:
     c = paper_cites(inputs)
     mrp = r["12_published_benchmarks"]["eurlex_mrp"]
     first, second = r["10_combined_method"], r["11_second_attempt"]
-    newer, only = "with newer laws", "training laws only"
+    newer, only = "With newer laws", "Training laws only"
     laws_in_points = [
         ("Combined method, second attempt", newer, second["eurlex"]["scores"]["all"], "lead"),
         ("Combined method, first attempt", newer, first["eurlex"]["scores"]["all"], "lead2"),
@@ -623,20 +623,20 @@ def benchmark_rows(inputs: Inputs) -> tuple[Bars, Bars]:
         ("Combined method, first attempt", only, first["eurlex_train_only"]["scores"]["all"], "lead2"),
         ("Fine-tuned Legal-BERT", newer, first["eurlex"]["best_single"]["all"], ""),
         ("Fine-tuned Legal-BERT", only, first["eurlex_train_only"]["best_single"]["all"], ""),
-        ("BERT, published", f"the benchmark to beat {c['multieurlex']}", mrp["BERT (printed)"]["all"], "ref"),
+        ("BERT, published", f"The benchmark to beat {c['multieurlex']}", mrp["BERT (printed)"]["all"], "ref"),
         ("XR-Transformer", only, mrp["xr_transformer"]["all"], ""),
         ("Omikuji", only, mrp["omikuji"]["all"], ""),
         ("Embedding classifier", only, mrp["embedding_classifier"]["all"], ""),
         ("Similar documents", only, mrp["knn"]["all"], ""),
-        ("Label search", "no training", mrp["label_search"]["all"], ""),
+        ("Label search", "No training", mrp["label_search"]["all"], ""),
     ]
     laws = [(name, sub, as_share(score), kind) for name, sub, score, kind in laws_in_points]
     rerun = humbert_rerun(r)
     v2 = r["15_humset_v2"]["full_test"]
     on_v2 = sorted(
         [
-            ("HumBERT, published", f"the benchmark to beat {c['humbert']}", rerun["printed"]["Mean"], "ref"),
-            ("HumBERT recipe, rerun", "the authors' code and settings", rerun["paper"]["Mean"], ""),
+            ("HumBERT, published", f"The benchmark to beat {c['humbert']}", rerun["printed"]["Mean"], "ref"),
+            ("HumBERT recipe, rerun", "The authors' code and settings", rerun["paper"]["Mean"], ""),
             (
                 "Combined method",
                 combined_name(inputs, "combined", HUMSET_V2)[1],
@@ -645,7 +645,7 @@ def benchmark_rows(inputs: Inputs) -> tuple[Bars, Bars]:
             ),
             (
                 method_name(inputs.methods, v2["best_single_source"], HUMSET_V2) + ", ours",
-                "the best single source on development excerpts",
+                "The best single source on development excerpts",
                 v2["best_single"]["Mean"],
                 "",
             ),

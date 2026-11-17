@@ -43,7 +43,7 @@ methods:
     notebook: '03'
   select_all:
     name: LLM chooses from the full list
-    sub: the LLM sees every label at once
+    sub: The LLM sees every label at once
     kind: LLM
     needs_labels: false
     summary: The LLM sees every HumSet label at once and picks the ones that fit.
@@ -56,7 +56,7 @@ methods:
     notebook: '03'
   funnel_names:
     name: Search label names, then LLM chooses
-    sub: an LLM picks from the 100 closest labels
+    sub: An LLM picks from the 100 closest labels
     kind: LLM
     needs_labels: false
     summary: Search finds the 100 closest label names; the LLM picks from them.
@@ -71,7 +71,7 @@ methods:
     notebook: '04'
   funnel_cards:
     name: Search label definitions, then LLM chooses
-    sub: as above, matching written definitions
+    sub: As above, matching written definitions
     kind: LLM
     needs_labels: false
     summary: As above, but labels are found and shown through short written definitions.
@@ -87,7 +87,7 @@ methods:
     notebook: '04'
   funnel_hybrid:
     name: Trained model and search, then LLM chooses
-    sub: shortlist from both
+    sub: Shortlist from both
     kind: LLM + trained model
     needs_labels: true
     summary: The shortlist mixes a trained model's top labels with search results.
@@ -102,7 +102,7 @@ methods:
     notebook: '04'
   funnel_cards_checked:
     name: Search definitions, LLM chooses and double-checks
-    sub: a second call checks each label
+    sub: A second call checks each label
     kind: LLM
     needs_labels: false
     summary: After picking, a second LLM call keeps only labels it can back with a quote.
@@ -117,7 +117,7 @@ methods:
     notebook: '06'
   funnel_cards_quote_filter:
     name: Search definitions, LLM chooses, keep quoted labels
-    sub: no extra call
+    sub: No extra call
     kind: LLM
     needs_labels: false
     summary: Keeps only picked labels whose supporting quote really is in the text.
@@ -132,7 +132,7 @@ methods:
     notebook: '06'
   walk_strict:
     name: Tree walk, one branch
-    sub: top-down, one path
+    sub: Top-down, one path
     kind: LLM
     needs_labels: false
     summary: Walks down the taxonomy from the top, following a single branch.
@@ -146,7 +146,7 @@ methods:
     notebook: '05'
   walk_branching:
     name: Tree walk, three branches
-    sub: top-down, several paths
+    sub: Top-down, several paths
     kind: LLM
     needs_labels: false
     summary: Walks down from the top, keeping up to three branches open.
@@ -161,7 +161,7 @@ methods:
     notebook: '05'
   walk_anchored:
     name: Tree walk from search results
-    sub: starts lower, looks ahead
+    sub: Starts lower, looks ahead
     kind: LLM
     needs_labels: false
     summary: Starts from labels found by search, and looks ahead before each choice.
@@ -194,7 +194,7 @@ methods:
     notebook: '09'
   llm_ensemble:
     name: LLM-Ensemble
-    sub: five LLMs write keywords, one rates them
+    sub: Five LLMs write keywords, one rates them
     kind: LLM
     needs_labels: false
     summary: Five LLMs write keywords; a sixth rates the labels they match.
@@ -211,7 +211,7 @@ methods:
     notebook: '09'
   omikuji:
     name: Omikuji
-    sub: word counts, label trees
+    sub: Word counts, label trees
     kind: Trained
     needs_labels: true
     summary: A fast classifier on word counts, built for very large label sets.
@@ -226,7 +226,7 @@ methods:
     notebook: '08'
   xr_transformer:
     name: XR-Transformer
-    sub: the leading trained model in a 2026 benchmark {cite:kahler2026}
+    sub: The leading trained model in a 2026 benchmark {cite:kahler2026}
     kind: Trained
     needs_labels: true
     summary: A BERT model fine-tuned with word counts, over groups of labels.
@@ -258,7 +258,7 @@ methods:
     notebook: '08'
   knn:
     name: Similar documents
-    sub: labels of the closest training documents
+    sub: Labels of the closest training documents
     kind: Trained
     needs_labels: true
     summary: Gives the text the labels of the most similar training documents.
@@ -273,7 +273,7 @@ methods:
     notebook: '08'
   label_search:
     name: Label search
-    sub: closest label names, no training
+    sub: Closest label names, no training
     kind: No training
     needs_labels: false
     summary: Returns the labels whose names are closest in meaning to the text.
@@ -292,7 +292,7 @@ methods:
       eurlex: Fine-tuned Legal-BERT
       humset: Fine-tuned HumBERT
       humset_v2: Fine-tuned HumBERT
-    sub: a BERT-style model with one output per label
+    sub: A BERT-style model with one output per label
     kind: Fine-tuned
     needs_labels: true
     summary: A BERT model fine-tuned with one output per label, as in the benchmarks.
@@ -310,7 +310,7 @@ methods:
     notebook: '10'
   humbert_recipe:
     name: Authors' HumBERT recipe
-    sub: the paper's own trainer and settings, rerun {cite:humbert}
+    sub: The paper's own trainer and settings, rerun {cite:humbert}
     kind: Fine-tuned
     needs_labels: true
     summary: HumBERT fine-tuned with its authors' own code and settings, rerun here on our data.
@@ -348,7 +348,7 @@ methods:
     notebook: '10'
   reranker:
     name: Fine-tuned reranker
-    sub: reads text and label together
+    sub: Reads text and label together
     kind: Fine-tuned
     needs_labels: true
     summary: Reads the text and one label together and scores how well they fit.
@@ -363,7 +363,7 @@ methods:
     notebook: '10'
   gliner:
     name: GLiNER2.5
-    sub: reads text and label names together
+    sub: Reads text and label names together
     kind: Fine-tuned
     needs_labels: true
     summary: Reads the text with all label names at once and scores each label.
