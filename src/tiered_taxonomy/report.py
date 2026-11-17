@@ -574,6 +574,35 @@ class TierMix:
     excerpt_rows: int
 
 
+def label_path(tree: Mapping[str, Any], name: str) -> list[tuple[int, str]]:
+    """Return the tier and name of each label from tier 1 down to the label called `name`, in a label browser
+    tree, whose nodes are [name, tier, children, uses]. Raises unless exactly one label has that name and each
+    label on the way up has a single parent."""
+    nodes = tree["nodes"]
+    found = [key for key, node in nodes.items() if node[0] == name]
+    if len(found) != 1:
+        raise ValueError(f"expected one label called {name!r}, found {len(found)}")
+    parents: dict[str, list[str]] = {}
+    for key, node in nodes.items():
+        for child in node[2]:
+            parents.setdefault(child, []).append(key)
+    path = [found[0]]
+    while path[-1] in parents:
+        if len(parents[path[-1]]) != 1:
+            raise ValueError(f"{nodes[path[-1]][0]!r} has more than one parent")
+        path.append(parents[path[-1]][0])
+    return [(nodes[key][1], nodes[key][0]) for key in reversed(path)]
+
+
+def near_miss_paths(tree: Mapping[str, Any], person: str, method: str) -> list[tuple[int, str]]:
+    """Return the path to `person`'s label, for an example of a near miss with `method`'s label. Raises unless
+    the two labels are siblings: the same tier, under the same parent."""
+    mine, theirs = label_path(tree, person), label_path(tree, method)
+    if len(mine) != len(theirs) or mine[:-1] != theirs[:-1] or mine[-1][0] != theirs[-1][0]:
+        raise ValueError(f"{person!r} and {method!r} are not labels at the same tier under the same parent")
+    return mine
+
+
 def fine_tuned_behind(rows: Sequence[Row], llm: Row) -> list[Row]:
     """Return the fine-tuned rows that score below the LLM method `llm` by exact labels, best first."""
     return [r for r in rows if r.kind == "Fine-tuned" and r.f1 < llm.f1]

@@ -49,6 +49,46 @@ def test_every_notebook_a_card_names_is_in_the_repository(inputs: rp.Inputs) -> 
             assert set(re.findall(r"\b\d\d\b", method_row.notebook)) <= existing, method_row.name
 
 
+TREE = {
+    "nodes": {
+        "t": ["trade", 1, ["m"], 0],
+        "m": ["marketing", 2, ["p", "x"], 0],
+        "p": ["preparation for market", 3, ["l", "k"], 5],
+        "l": ["labelling", 4, [], 9],
+        "k": ["packaging", 4, [], 3],
+        "x": ["exports", 3, [], 2],
+    }
+}
+
+
+def test_label_path_runs_from_tier_one_down_to_the_label() -> None:
+    assert rp.label_path(TREE, "labelling") == [
+        (1, "trade"),
+        (2, "marketing"),
+        (3, "preparation for market"),
+        (4, "labelling"),
+    ]
+    with pytest.raises(ValueError, match="one label"):
+        rp.label_path(TREE, "missing")
+    two_parents = {"nodes": {**TREE["nodes"], "x": ["exports", 3, ["l"], 2]}}
+    with pytest.raises(ValueError, match="more than one parent"):
+        rp.label_path(two_parents, "labelling")
+
+
+def test_near_miss_paths_needs_two_labels_under_one_parent() -> None:
+    assert rp.near_miss_paths(TREE, "labelling", "packaging")[-1] == (4, "labelling")
+    with pytest.raises(ValueError, match="same parent"):
+        rp.near_miss_paths(TREE, "labelling", "exports")
+
+
+def test_near_miss_panel_names_the_tier_of_every_label(inputs: rp.Inputs) -> None:
+    page = build_page(REPO)
+    panel = page[page.index("<figure class=nearmiss>") : page.index("</figure>", page.index("nearmiss"))]
+    assert re.findall(r"<span class=t>([^<]+)</span>", panel) == ["Tier 1", "Tier 2", "Tier 3", "Tier 4"]
+    assert "the tier 4 label <q>labelling</q>" in panel
+    assert "Exact label" not in panel
+
+
 def test_rows_are_best_first_with_distinct_names(inputs: rp.Inputs) -> None:
     for test_set in ("eurlex", "humset"):
         rows = rp.method_rows(inputs, test_set)

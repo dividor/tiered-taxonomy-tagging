@@ -340,13 +340,18 @@ td.num.none { color: var(--faint); font-style: italic; }
   </div>
   <figure class=nearmiss>
     <figcaption><h3>Why the exact score is lower than the tier scores</h3>
-    <p>Say a person gave a law the EuroVoc label <q>labelling</q>, and a method chose <q>packaging</q>.
-    Both sit in the same branch of EuroVoc.</p></figcaption>
-    <ol class=path><li><span class=t>Tier 1</span><span class=lab>trade</span><span class=ok>both match</span></li><li><span class=t>Tier 2</span><span class=lab>marketing</span><span class=ok>both match</span></li><li><span class=t>Tier 3</span><span class=lab>preparation for market</span><span class=ok>both match</span></li><li class=leaf><span class=t>Exact label</span><span class=lab>
+    <p>Every box below is a EuroVoc label; EuroVoc arranges its labels in a tree of 8
+    tiers. Say a person gave a law the tier 4 label <q>labelling</q>, and a method chose
+    <q>packaging</q>, another tier 4 label. Both sit under the same tier 3 label,
+    <q>preparation for market</q>.</p>
+    </figcaption>
+    <ol class=path><li><span class=t>Tier 1</span><span class=lab>trade</span><span class=ok>both match</span></li><li><span class=t>Tier 2</span><span class=lab>marketing</span><span class=ok>both match</span></li><li><span class=t>Tier 3</span><span class=lab>preparation for market</span><span class=ok>both match</span></li><li class=leaf><span class=t>Tier 4</span><span class=lab>
       <span class=who>labelling <small>person</small></span>
-      <span class=who>packaging <small>method</small></span></span><span class=no>no match</span></li></ol>
-    <p>The tier scores move both labels up to that tier before comparing them, so this near miss counts as
-    correct at tiers 1, 2 and 3 and scores nothing on the exact measure.</p>
+      <span class=who>packaging <small>method</small></span></span>
+      <span class=no>no match</span></li></ol>
+    <p>A tier score replaces each label with the label above it at that tier, then compares those. At tiers
+    1, 2 and 3 both labels become the same label, so this near miss counts as correct. The exact score
+    compares the labels themselves, at whatever tier they sit, here tier 4, so it scores nothing.</p>
     <ul>
       <li><strong>EU laws:</strong> EuroVoc has 7,372 labels, only
       693 of them in tiers 1 to 3. Of the labels people assigned to these test laws,

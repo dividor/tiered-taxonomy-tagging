@@ -30,6 +30,7 @@ from tiered_taxonomy.report import (
     load_inputs,
     method_name,
     method_rows,
+    near_miss_paths,
     plain_case,
     ranked_bars,
     ref_html,
@@ -327,23 +328,34 @@ def header(inputs: Inputs, laws: Sequence[Row], excerpts: Sequence[Row]) -> str:
 """
 
 
-def near_miss(mix: TierMix) -> str:
+def near_miss(
+    mix: TierMix, tree: Mapping[str, Any], person: str = "labelling", method: str = "packaging"
+) -> str:
     """Return a worked example of a near miss, and where the assigned labels sit, to explain why the exact
-    score is lower than the tier scores."""
-    tiers = [("Tier 1", "trade"), ("Tier 2", "marketing"), ("Tier 3", "preparation for market")]
-    path = "".join(
-        f"<li><span class=t>{t}</span><span class=lab>{label}</span><span class=ok>both match</span></li>"
-        for t, label in tiers
+    score is lower than the tier scores. The example's path is read from EuroVoc's tree in `tree`."""
+    path = near_miss_paths(tree, person, method)
+    *above, (tier, _) = path
+    parent = above[-1][1]
+    boxes = "".join(
+        f"<li><span class=t>Tier {t}</span><span class=lab>{esc(label)}</span>"
+        "<span class=ok>both match</span></li>"
+        for t, label in above
     )
+    shared = ", ".join(str(t) for t, _ in above[:-1]) + f" and {above[-1][0]}"
     return f"""<figure class=nearmiss>
     <figcaption><h3>Why the exact score is lower than the tier scores</h3>
-    <p>Say a person gave a law the EuroVoc label <q>labelling</q>, and a method chose <q>packaging</q>.
-    Both sit in the same branch of EuroVoc.</p></figcaption>
-    <ol class=path>{path}<li class=leaf><span class=t>Exact label</span><span class=lab>
-      <span class=who>labelling <small>person</small></span>
-      <span class=who>packaging <small>method</small></span></span><span class=no>no match</span></li></ol>
-    <p>The tier scores move both labels up to that tier before comparing them, so this near miss counts as
-    correct at tiers 1, 2 and 3 and scores nothing on the exact measure.</p>
+    <p>Every box below is a EuroVoc label; EuroVoc arranges its labels in a tree of {len(tree["tiers"])}
+    tiers. Say a person gave a law the tier {tier} label <q>{esc(person)}</q>, and a method chose
+    <q>{esc(method)}</q>, another tier {tier} label. Both sit under the same tier {tier - 1} label,
+    <q>{esc(parent)}</q>.</p>
+    </figcaption>
+    <ol class=path>{boxes}<li class=leaf><span class=t>Tier {tier}</span><span class=lab>
+      <span class=who>{esc(person)} <small>person</small></span>
+      <span class=who>{esc(method)} <small>method</small></span></span>
+      <span class=no>no match</span></li></ol>
+    <p>A tier score replaces each label with the label above it at that tier, then compares those. At tiers
+    {shared} both labels become the same label, so this near miss counts as correct. The exact score
+    compares the labels themselves, at whatever tier they sit, here tier {tier}, so it scores nothing.</p>
     <ul>
       <li><strong>EU laws:</strong> EuroVoc has {mix.law_nodes:,} labels, only
       {mix.law_top_three:,} of them in tiers 1 to 3. Of the labels people assigned to these test laws,
@@ -430,7 +442,7 @@ def results(
     </dl></div>
     <div><h3>Kinds of method</h3><dl>{kinds}</dl></div>
   </div>
-  {near_miss(mix)}
+  {near_miss(mix, inputs.results["label_browser"]["eurlex"]["tree"])}
   <h3>EU laws (MultiEURLEX): 600 test laws, EuroVoc's top three tiers</h3>
   {rb.data_links("eurlex", inputs.results["label_browser"])}
   <p class=note>The laws are split by date, so the test laws are newer than the training laws. Rows marked
