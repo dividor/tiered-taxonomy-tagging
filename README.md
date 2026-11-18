@@ -1,6 +1,6 @@
 # Tagging documents with a tiered taxonomy
 
-**Read the blog post** (link to follow) · **[Explore the results report](https://dividor.github.io/tiered-taxonomy-tagging/)**
+**Read the blog post** (link to follow) · **[Explore the results report](https://www.astrobagel.com/apps/taxonomy-tagger-results/)**
 
 Which ways of tagging documents with labels from a tiered taxonomy actually work? This repository tests 23 of
 them on two public test sets with labels assigned by people: EU laws tagged with EuroVoc, and humanitarian
@@ -35,7 +35,7 @@ papers behind it. Most methods are reduced forms of their papers; each module's 
 
 <!-- results:start -->
 
-Every number below comes from `outputs/results`, through the same code as the [interactive report](https://dividor.github.io/tiered-taxonomy-tagging/), which also has a card for each method. Scores run from 0 to 1, and higher is better. *Exact labels* gives credit only for the very label a person assigned; *Tier N* gives credit for landing in the right branch at that level. Recall columns are the share found of the correct labels that training used least, and that it never used. This section is written by `scripts/make_report.py`; do not edit it by hand.
+Every number below comes from `outputs/results`, through the same code as the [interactive report](https://www.astrobagel.com/apps/taxonomy-tagger-results/), which also has a card for each method. Scores run from 0 to 1, and higher is better. *Exact labels* gives credit only for the very label a person assigned; *Tier N* gives credit for landing in the right branch at that level. Recall columns are the share found of the correct labels that training used least, and that it never used. This section is written by `scripts/make_report.py`; do not edit it by hand.
 
 ### Against the published benchmarks
 

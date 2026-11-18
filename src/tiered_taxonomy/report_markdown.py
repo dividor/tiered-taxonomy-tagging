@@ -21,6 +21,8 @@ from tiered_taxonomy.report_page import benchmark_rows
 
 START = "<!-- results:start -->"
 END = "<!-- results:end -->"
+# Where the interactive report is published.
+REPORT_URL = "https://www.astrobagel.com/apps/taxonomy-tagger-results/"
 RARE_HEADS = {"rare": "Rarest quarter recall", "unseen": "Never-seen recall"}
 
 
@@ -120,7 +122,7 @@ def results_section(inputs: Inputs) -> str:
     return "\n\n".join(
         [
             "Every number below comes from `outputs/results`, through the same code as the "
-            "[interactive report](https://dividor.github.io/tiered-taxonomy-tagging/), which also has a card "
+            f"[interactive report]({REPORT_URL}), which also has a card "
             "for each method. Scores run from 0 to 1, and higher is better. *Exact labels* gives credit only "
             "for the very label a person assigned; *Tier N* gives credit for landing in the right branch at "
             "that level. Recall columns are the share found of the correct labels that training used least, "
