@@ -1,6 +1,6 @@
 # Tagging documents with a tiered taxonomy
 
-**Read the blog post** (link to follow) · **[Explore the results report](https://www.astrobagel.com/apps/taxonomy-tagger-results/)**
+**[Read the blog post](https://medium.com/@astrobagel/tagging-documents-with-a-tiered-taxonomy-e86b73d602de)** · **[Explore the results report](https://www.astrobagel.com/apps/taxonomy-tagger-results/)**
 
 Which ways of tagging documents with labels from a tiered taxonomy actually work? This repository tests 23 of
 them on two public test sets with labels assigned by people: EU laws tagged with EuroVoc, and humanitarian

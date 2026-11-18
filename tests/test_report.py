@@ -277,3 +277,10 @@ def test_tier_sentence_names_each_tier_a_combined_row_does_not_lead(inputs: rp.I
     for tier, row, lead in found:
         assert f"tier {tier} on the excerpts" in sentence and f"{lead:.3f} ahead" in sentence
         assert row.kind != "Combined" and lead > 0
+
+
+def test_the_report_links_the_blog_post() -> None:
+    page = build_page(REPO)
+    header = page[: page.index("</header>")]
+    post = "https://medium.com/@astrobagel/tagging-documents-with-a-tiered-taxonomy-e86b73d602de"
+    assert f'href="{post}"' in header

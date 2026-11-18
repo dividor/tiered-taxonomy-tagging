@@ -312,6 +312,8 @@ def header(inputs: Inputs, laws: Sequence[Row], excerpts: Sequence[Row]) -> str:
   draws on is chosen for each dataset. It led on the EU laws, and on HumSet 2.0.0 by the HumBERT paper's
   measure, {exact_lead(excerpts, scores=False)}. Methods that prompt an LLM came well behind, though on the
   EU laws they found more of the rare labels.</p>
+  <p class=note>Read the blog post:
+  {_out(BLOG_URL, "Tagging Documents with a Tiered Taxonomy")}, on Medium.</p>
 </header>
 <section class=col aria-label="The short answer"><div class=answer>
   <div><strong class=pass>{law_score:.3f}</strong>
@@ -503,6 +505,8 @@ def check_v2_macro_lead(rows: Sequence[Row]) -> None:
 
 
 HUMSET_PAGE = "https://blog.thedeep.io/humset/"
+# The Medium post this report goes with.
+BLOG_URL = "https://medium.com/@astrobagel/tagging-documents-with-a-tiered-taxonomy-e86b73d602de"
 
 
 def _hf(repo: str) -> str:
