@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -26,6 +27,7 @@ from tiered_taxonomy.models import (
     ModelSpec,
     batches,
     hf_token,
+    make_chat_model,
     make_embeddings,
     spec_from_config,
 )
@@ -241,3 +243,26 @@ def test_a_limited_client_shares_saved_replies_but_asks_a_different_request(tmp_
     assert (limited.counts["calls"], limited.counts["cached"]) == (2, 1)
     client.ask("s", "u")
     assert client.counts["cached"] == 0
+
+
+FOUNDRY = ModelSpec("anthropic_foundry", "claude-opus-5-5-fast", temperature=None, json_mode=False)
+
+
+def test_a_foundry_model_uses_the_deployment_and_sends_no_temperature(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("ANTHROPIC_FOUNDRY_BASE_URL", "https://example.services.ai.azure.com/anthropic/")
+    monkeypatch.setenv("ANTHROPIC_FOUNDRY_API_KEY", "not-a-real-key")
+    model: Any = make_chat_model(FOUNDRY)
+    assert model.anthropic_api_url == "https://example.services.ai.azure.com/anthropic/"
+    assert model.model == "claude-opus-5-5-fast"
+    assert model.temperature is None
+
+
+def test_a_foundry_model_raises_without_settings_or_with_json_mode(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("ANTHROPIC_FOUNDRY_BASE_URL", raising=False)
+    monkeypatch.delenv("ANTHROPIC_FOUNDRY_API_KEY", raising=False)
+    with pytest.raises(RuntimeError, match="ANTHROPIC_FOUNDRY_BASE_URL and ANTHROPIC_FOUNDRY_API_KEY"):
+        make_chat_model(FOUNDRY)
+    with pytest.raises(ValueError, match="no JSON mode"):
+        make_chat_model(replace(FOUNDRY, json_mode=True))

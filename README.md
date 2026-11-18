@@ -199,6 +199,16 @@ scripts/run_pipeline.sh               # everything, in order
 
 To rerun one notebook, name it: `scripts/run_pipeline.sh 10`.
 
+### An optional pilot: a stronger LLM
+
+Notebook 18 asks whether a much stronger LLM would change the picture. It swaps Claude Opus 5.5, in fast mode,
+into KI-FSPrompt, the best LLM method on the EU laws, on 50 of the test laws, and scores it against the saved
+run on the same laws. It is not part of a full run, because it needs a Claude deployment of your own on
+[Microsoft Foundry](https://ai.azure.com): set `ANTHROPIC_FOUNDRY_BASE_URL` and `ANTHROPIC_FOUNDRY_API_KEY` in
+`.env` (see [.env.example](.env.example)) and your deployment's name in the `strong` model of
+[configs/experiment.yaml](configs/experiment.yaml), then run `scripts/run_pipeline.sh 18`. It costs about $3.50,
+and stops if its first five laws project past $10.
+
 ### Will you get the same numbers?
 
 Close, not identical. The test sets and GPU recipes are pinned, but three things vary:

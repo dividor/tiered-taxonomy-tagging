@@ -4,6 +4,7 @@
 #
 #   scripts/run_pipeline.sh            # everything
 #   scripts/run_pipeline.sh 08 09      # only the notebooks whose names start with these numbers
+#   scripts/run_pipeline.sh 18         # the optional pilot of a stronger LLM, never run by default
 #
 # Every model reply, embedding and finished training step is saved in the data folder, so a rerun skips what is
 # done and pays for nothing twice. The setup check, the download and the embedding always run, because every
@@ -49,6 +50,8 @@ fi
 for notebook in "${AFTER_GPU[@]}"; do
   if wanted "$notebook" "$@"; then run_notebook "$notebook"; fi
 done
+# Optional: needs a Claude deployment of your own on Microsoft Foundry, so it runs only when named.
+if [ "$#" -gt 0 ] && wanted 18_stronger_llm_pilot "$@"; then run_notebook 18_stronger_llm_pilot; fi
 if [ "$#" -eq 0 ]; then
   uv run python scripts/export_label_browser.py
   uv run python scripts/make_report.py

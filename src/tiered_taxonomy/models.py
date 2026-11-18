@@ -1,11 +1,13 @@
 """Chat and embedding models behind LangChain, so a model is swapped by editing configs/experiment.yaml.
 
 Hugging Face's router speaks the OpenAI API, so it goes through LangChain's OpenAI integration with a
-different base URL. Any other LangChain provider name in the configuration works without changing the calling
-code, with that provider's own key in the environment.
+different base URL. Claude deployed on Microsoft Foundry speaks the Anthropic API, so it goes through
+LangChain's Anthropic integration with the deployment's base URL. Any other LangChain provider name in the
+configuration works without changing the calling code, with that provider's own key in the environment.
 
-The Hugging Face token comes from `HF_TOKEN` or the local Hugging Face login file. It is never written to a
-file or printed.
+The Hugging Face token comes from `HF_TOKEN` or the local Hugging Face login file. Foundry's key and base URL
+come from `ANTHROPIC_FOUNDRY_API_KEY` and `ANTHROPIC_FOUNDRY_BASE_URL`. None of them is written to a file or
+printed.
 """
 
 from __future__ import annotations
@@ -24,6 +26,8 @@ from langchain_huggingface import HuggingFaceEndpointEmbeddings
 HF_ROUTER_URL = "https://router.huggingface.co/v1"
 HF_ROUTER = "huggingface_router"
 HF_INFERENCE = "huggingface_inference"
+ANTHROPIC_FOUNDRY = "anthropic_foundry"
+FOUNDRY_SETTINGS = ("ANTHROPIC_FOUNDRY_BASE_URL", "ANTHROPIC_FOUNDRY_API_KEY")
 
 
 @dataclass(frozen=True)
@@ -55,6 +59,14 @@ def hf_token(login_file: Path | None = None) -> str:
     return token
 
 
+def foundry_settings() -> dict[str, str]:
+    """Return the base URL and key of a Claude deployment on Microsoft Foundry. Raises if either is unset."""
+    missing = [name for name in FOUNDRY_SETTINGS if not os.environ.get(name)]
+    if missing:
+        raise RuntimeError(f"set {' and '.join(missing)} to use a Claude deployment on Microsoft Foundry")
+    return {"base_url": os.environ[FOUNDRY_SETTINGS[0]], "api_key": os.environ[FOUNDRY_SETTINGS[1]]}
+
+
 def make_chat_model(spec: ModelSpec) -> BaseChatModel:
     """Return a LangChain chat model, asking for JSON where the model's provider supports it."""
     settings: dict[str, Any] = {"max_tokens": spec.max_tokens, "timeout": 180, "max_retries": 0}
@@ -62,6 +74,10 @@ def make_chat_model(spec: ModelSpec) -> BaseChatModel:
         settings["temperature"] = spec.temperature
     if spec.provider == HF_ROUTER:
         settings.update(model_provider="openai", base_url=HF_ROUTER_URL, api_key=hf_token())
+    elif spec.provider == ANTHROPIC_FOUNDRY:
+        if spec.json_mode:
+            raise ValueError("the Anthropic API has no JSON mode: set json_mode to false for this model")
+        settings.update(model_provider="anthropic", **foundry_settings())
     else:
         settings.update(model_provider=spec.provider)
     model = init_chat_model(spec.model, **settings)

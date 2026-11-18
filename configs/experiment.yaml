@@ -14,6 +14,17 @@ models:
     input_price: 0.03
     output_price: 0.14
     max_tokens: 8000
+  # A stronger model for notebook 18's pilot only: Claude Opus 5.5 in fast mode, deployed on Microsoft Foundry.
+  # Foundry bills it at Anthropic's fast-mode rates. It takes no temperature and has no JSON mode; thinking is
+  # always on, at the model's default effort, and counts as output. Set `model` to your deployment's name.
+  strong:
+    provider: anthropic_foundry
+    model: claude-opus-5-5-fast
+    input_price: 8.0
+    output_price: 40.0
+    max_tokens: 16000
+    temperature: null
+    json_mode: false
 
 # The open models standing in for the keyword generators in Kähler et al.'s LLM-Ensemble, whose own are not on the
 # router. Their ranker, Llama-3.1-8B-Instruct, is, but its providers do not offer JSON mode.

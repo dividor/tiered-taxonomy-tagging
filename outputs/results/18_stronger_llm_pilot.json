@@ -1,0 +1,195 @@
+{
+  "fine_tuned_legal_bert": {
+    "exact": {
+      "f1": 0.5300353356890459,
+      "items": 50,
+      "macro_f1": 0.4400812649775305,
+      "precision": 0.5905511811023622,
+      "recall": 0.4807692307692308
+    },
+    "labels_per_item": 5.08,
+    "languages": {
+      "en": {
+        "f1_finest_tier": 0.7161,
+        "items": 50
+      }
+    },
+    "rarity": {
+      "common": {
+        "gold_labels": 282,
+        "recall": 0.5177
+      },
+      "rare": {
+        "gold_labels": 24,
+        "recall": 0.125
+      },
+      "unseen": {
+        "gold_labels": 6,
+        "recall": 0.1667
+      }
+    },
+    "tiers": {
+      "1": {
+        "f1": 0.7701492537313432,
+        "items": 50,
+        "macro_f1": 0.6919647967967296,
+        "precision": 0.8431372549019608,
+        "recall": 0.7087912087912088
+      },
+      "2": {
+        "f1": 0.7208333333333334,
+        "items": 50,
+        "macro_f1": 0.5895033345415789,
+        "precision": 0.8084112149532711,
+        "recall": 0.650375939849624
+      },
+      "3": {
+        "f1": 0.7161290322580646,
+        "items": 50,
+        "macro_f1": 0.5938248152796471,
+        "precision": 0.7985611510791367,
+        "recall": 0.6491228070175439
+      }
+    }
+  },
+  "laws": 50,
+  "methods": {
+    "ki_fsprompt": {
+      "cost_per_1000": 68.15,
+      "gain": [
+        0.1206,
+        0.0852,
+        0.1558
+      ],
+      "opus_fast": {
+        "exact": {
+          "f1": 0.4630541871921182,
+          "items": 50,
+          "macro_f1": 0.5799362463262878,
+          "precision": 0.376,
+          "recall": 0.6025641025641025
+        },
+        "labels_per_item": 10.0,
+        "languages": {
+          "en": {
+            "f1_finest_tier": 0.6963,
+            "items": 50
+          }
+        },
+        "rarity": {
+          "common": {
+            "gold_labels": 282,
+            "recall": 0.6277
+          },
+          "rare": {
+            "gold_labels": 24,
+            "recall": 0.375
+          },
+          "unseen": {
+            "gold_labels": 6,
+            "recall": 0.3333
+          }
+        },
+        "tiers": {
+          "1": {
+            "f1": 0.7692307692307693,
+            "items": 50,
+            "macro_f1": 0.6885016396334394,
+            "precision": 0.7013574660633484,
+            "recall": 0.8516483516483516
+          },
+          "2": {
+            "f1": 0.6981450252951096,
+            "items": 50,
+            "macro_f1": 0.6803716608594657,
+            "precision": 0.6330275229357798,
+            "recall": 0.7781954887218046
+          },
+          "3": {
+            "f1": 0.6963350785340314,
+            "items": 50,
+            "macro_f1": 0.7229536511574326,
+            "precision": 0.6303317535545023,
+            "recall": 0.7777777777777778
+          }
+        }
+      },
+      "original": {
+        "exact": {
+          "f1": 0.34249999999999997,
+          "items": 50,
+          "macro_f1": 0.43900414937759336,
+          "precision": 0.2807377049180328,
+          "recall": 0.4391025641025641
+        },
+        "labels_per_item": 9.76,
+        "languages": {
+          "en": {
+            "f1_finest_tier": 0.5319,
+            "items": 50
+          }
+        },
+        "rarity": {
+          "common": {
+            "gold_labels": 282,
+            "recall": 0.4504
+          },
+          "rare": {
+            "gold_labels": 24,
+            "recall": 0.375
+          },
+          "unseen": {
+            "gold_labels": 6,
+            "recall": 0.1667
+          }
+        },
+        "tiers": {
+          "1": {
+            "f1": 0.6818181818181819,
+            "items": 50,
+            "macro_f1": 0.6188589995976108,
+            "precision": 0.6308411214953271,
+            "recall": 0.7417582417582418
+          },
+          "2": {
+            "f1": 0.5754385964912282,
+            "items": 50,
+            "macro_f1": 0.5602520948769355,
+            "precision": 0.5394736842105263,
+            "recall": 0.6165413533834586
+          },
+          "3": {
+            "f1": 0.5318860244233379,
+            "items": 50,
+            "macro_f1": 0.5619909026159026,
+            "precision": 0.4962025316455696,
+            "recall": 0.5730994152046783
+          }
+        }
+      },
+      "original_models": "Gemma 3 12B and 27B, Llama 3.1 8B",
+      "run": {
+        "calls": 100,
+        "cost_usd": 3.4077,
+        "invalid": 0,
+        "items": 50,
+        "malformed": 0,
+        "method": "ki_fsprompt",
+        "seconds": 1.1
+      }
+    }
+  },
+  "model": "claude-opus-5-5-fast",
+  "provider": "anthropic_foundry",
+  "verdict": {
+    "ki_fsprompt": {
+      "$ per 1,000 laws": 68.15,
+      "95% interval": [
+        0.0852,
+        0.1558
+      ],
+      "exact F1 gain": 0.1206,
+      "worth a full run": true
+    }
+  }
+}
