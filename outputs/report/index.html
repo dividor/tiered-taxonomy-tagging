@@ -292,10 +292,11 @@ td.num.none { color: var(--faint); font-style: italic; }
   EU laws they found more of the rare labels.</p>
 </header>
 <section class=col aria-label="The short answer"><div class=answer>
-  <div><strong class=pass>0.640</strong>
+  <div><strong class=pass>0.610</strong>
     <span class=vs>vs <b>0.484</b> published BERT benchmark</span>
-    <span class=eyebrow>Our combined method · EU laws</span><p>Mean R-Precision on the full test set. BERT's
-    score is from the MultiEURLEX paper (<a href="https://arxiv.org/abs/2109.00904" target="_blank" rel="noopener">Chalkidis et al., 2021</a>).</p></div>
+    <span class=eyebrow>Our combined method · EU laws</span><p>Mean R-Precision on the full test set,
+    trained on the training laws only, as BERT was; trained on newer laws as well, it scores
+    0.640. BERT's score is from the MultiEURLEX paper (<a href="https://arxiv.org/abs/2109.00904" target="_blank" rel="noopener">Chalkidis et al., 2021</a>).</p></div>
   <div><strong class=pass>0.663</strong>
     <span class=vs>vs <b>0.648</b> published HumBERT benchmark</span>
     <span class=eyebrow>Our combined method · HumSet 2.0.0</span><p>Mean macro F1 over five label groups on
@@ -487,7 +488,11 @@ td.num.none { color: var(--faint); font-style: italic; }
   <p class=note>For each law, take as many of the top-ranked labels as the law really has, and count the
   share that
   are correct. 1.00 is perfect. The MultiEURLEX paper prints it as a percentage: 48.4 there is 0.484
-  here.</p>
+  here. That figure is from its Table 4: BERT on English, all of the original labels, trained on the training
+  laws only, so our rows marked "training laws only" are the like-for-like comparison. The paper scores
+  against all 7,390 of its labels; we leave out the 72 of the 31,178 labels given to these laws that are
+  missing from our copy of EuroVoc. Counting them lowers our scores by less than 0.001, in a check made
+  outside the notebooks.</p>
   <div class=legend><span class=l1>Combined method, second attempt</span><span class=l2>Combined method, other
   versions</span><span>Single models</span><span class=lr>Published benchmark</span></div>
   <ol class=ranked><li><span class=lbl>Combined method, second attempt<small>With newer laws</small></span><span class="bar lead"><i style="width:91.4%"></i></span><b>0.640</b></li><li><span class=lbl>Combined method, first attempt<small>With newer laws</small></span><span class="bar lead2"><i style="width:89.2%"></i></span><b>0.624</b></li><li><span class=lbl>Combined method, second attempt<small>Training laws only</small></span><span class="bar lead2"><i style="width:87.2%"></i></span><b>0.610</b></li><li><span class=lbl>Combined method, first attempt<small>Training laws only</small></span><span class="bar lead2"><i style="width:85.8%"></i></span><b>0.600</b></li><li><span class=lbl>Fine-tuned Legal-BERT<small>With newer laws</small></span><span class="bar "><i style="width:75.6%"></i></span><b>0.529</b></li><li><span class=lbl>Fine-tuned Legal-BERT<small>Training laws only</small></span><span class="bar "><i style="width:71.5%"></i></span><b>0.500</b></li><li><span class=lbl>BERT, published<small>The benchmark to beat (<a href="https://arxiv.org/abs/2109.00904" target="_blank" rel="noopener">Chalkidis et al., 2021</a>)</small></span><span class="bar ref"><i style="width:69.1%"></i></span><b>0.484</b></li><li><span class=lbl>XR-Transformer<small>Training laws only</small></span><span class="bar "><i style="width:67.8%"></i></span><b>0.474</b></li><li><span class=lbl>Omikuji<small>Training laws only</small></span><span class="bar "><i style="width:67.2%"></i></span><b>0.471</b></li><li><span class=lbl>Embedding classifier<small>Training laws only</small></span><span class="bar "><i style="width:65.5%"></i></span><b>0.459</b></li><li><span class=lbl>Similar documents<small>Training laws only</small></span><span class="bar "><i style="width:60.6%"></i></span><b>0.424</b></li><li><span class=lbl>Label search<small>No training</small></span><span class="bar "><i style="width:19.9%"></i></span><b>0.139</b></li></ol>

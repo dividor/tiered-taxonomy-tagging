@@ -13,7 +13,7 @@ suggest labels, and a scorer trained on documents they never saw decides which t
 
 | | Combined method | Published benchmark |
 |---|---|---|
-| EU laws, all 5,000 test laws, mean R-Precision | **0.640** | 0.484 (BERT, Chalkidis et al., 2021) |
+| EU laws, all 5,000 test laws, mean R-Precision, trained on the training laws only as BERT was (0.640 trained on newer laws as well) | **0.610** | 0.484 (BERT, Chalkidis et al., 2021) |
 | HumSet 2.0.0, all 12,896 test excerpts, mean macro F1 | **0.663** | 0.648 (HumBERT, Tamagnone et al., 2023) |
 
 Methods that prompt an LLM came well behind the trained models, though on the EU laws they found more of the

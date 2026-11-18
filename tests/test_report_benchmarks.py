@@ -286,8 +286,11 @@ def test_every_score_on_the_page_is_a_decimal_from_zero_to_one(inputs: rp.Inputs
     page = build_page(REPO)
     text = re.sub(r"<[^>]+>", " ", re.sub(r"<(script|style)\b.*?</\1>", "", page, flags=re.S))
     law = inputs.results["11_second_attempt"]["eurlex"]["scores"]["all"] / 100
+    like_for_like = inputs.results["11_second_attempt"]["eurlex_train_only"]["scores"]["all"] / 100
     bert = inputs.results["12_published_benchmarks"]["eurlex_mrp"]["BERT (printed)"]["all"] / 100
-    assert re.search(rf"{law:.3f}\s+vs\s+{bert:.3f}", text)
+    assert re.search(rf"{like_for_like:.3f}\s+vs\s+{bert:.3f}", text)
+    card = " ".join(text[text.index(f"{like_for_like:.3f}") :].split())[:400]
+    assert "trained on the training laws only, as BERT was" in card and f"it scores {law:.3f}" in card
     laws = rp.method_rows(inputs, "eurlex")
     best, llm = rp.leaders(laws).best.f1, rp.leaders(laws).llm.f1
     assert re.search(rf"{llm:.3f}\s+vs\s+{best:.3f}", text)

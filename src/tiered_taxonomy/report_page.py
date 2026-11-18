@@ -296,7 +296,8 @@ def header(inputs: Inputs, laws: Sequence[Row], excerpts: Sequence[Row]) -> str:
     HumSet 2.0.0 rows."""
     r = inputs.results
     count = len({row.method for row in [*laws, *excerpts]})
-    law_score = as_share(r["11_second_attempt"]["eurlex"]["scores"]["all"])
+    law_score = as_share(r["11_second_attempt"]["eurlex_train_only"]["scores"]["all"])
+    with_newer = as_share(r["11_second_attempt"]["eurlex"]["scores"]["all"])
     bert = as_share(r["12_published_benchmarks"]["eurlex_mrp"]["BERT (printed)"]["all"])
     rerun = humbert_rerun(r)
     v2, humbert = rerun["combined_v2"]["Mean"], rerun["printed"]["Mean"]
@@ -315,8 +316,9 @@ def header(inputs: Inputs, laws: Sequence[Row], excerpts: Sequence[Row]) -> str:
 <section class=col aria-label="The short answer"><div class=answer>
   <div><strong class=pass>{law_score:.3f}</strong>
     <span class=vs>vs <b>{bert:.3f}</b> published BERT benchmark</span>
-    <span class=eyebrow>Our combined method · EU laws</span><p>Mean R-Precision on the full test set. BERT's
-    score is from the MultiEURLEX paper {c["multieurlex"]}.</p></div>
+    <span class=eyebrow>Our combined method · EU laws</span><p>Mean R-Precision on the full test set,
+    trained on the training laws only, as BERT was; trained on newer laws as well, it scores
+    {with_newer:.3f}. BERT's score is from the MultiEURLEX paper {c["multieurlex"]}.</p></div>
   <div><strong class=pass>{v2:.3f}</strong>
     <span class=vs>vs <b>{humbert:.3f}</b> published HumBERT benchmark</span>
     <span class=eyebrow>Our combined method · HumSet 2.0.0</span><p>Mean macro F1 over five label groups on
@@ -794,7 +796,11 @@ def benchmarks(inputs: Inputs) -> str:
   <p class=note>For each law, take as many of the top-ranked labels as the law really has, and count the
   share that
   are correct. 1.00 is perfect. The MultiEURLEX paper prints it as a percentage: 48.4 there is 0.484
-  here.</p>
+  here. That figure is from its Table 4: BERT on English, all of the original labels, trained on the training
+  laws only, so our rows marked "training laws only" are the like-for-like comparison. The paper scores
+  against all 7,390 of its labels; we leave out the 72 of the 31,178 labels given to these laws that are
+  missing from our copy of EuroVoc. Counting them lowers our scores by less than 0.001, in a check made
+  outside the notebooks.</p>
   <div class=legend><span class=l1>Combined method, second attempt</span><span class=l2>Combined method, other
   versions</span><span>Single models</span><span class=lr>Published benchmark</span></div>
   {ranked_bars(laws, 0.7, "{:.3f}")}
