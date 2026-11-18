@@ -16,12 +16,14 @@ from openai.types import CompletionUsage
 from openai.types.chat import ChatCompletion
 
 from tiered_taxonomy.llm import (
+    TRANSPORT_ATTEMPTS,
     Client,
     ReplyStore,
     extract_json_object,
     parse_json_object,
     request_key,
     run_all,
+    transport_wait,
 )
 from tiered_taxonomy.models import (
     ModelSpec,
@@ -105,10 +107,17 @@ def test_transport_errors_are_retried_then_raised(tmp_path: Path) -> None:
     client = Client(SPEC, store, flaky, sleep=waits.append)
     assert client.ask("s", "u").parsed == {"ok": True}
     assert waits == [2, 4]
-    broken: Any = Flaky(10)
+    broken: Any = Flaky(TRANSPORT_ATTEMPTS)
     failing = Client(SPEC, store, broken, sleep=waits.append)
     with pytest.raises(ConnectionError):
         failing.ask("s", "another request")
+
+
+def test_retries_wait_at_most_a_minute_each_and_about_half_an_hour_in_all() -> None:
+    waits = [transport_wait(attempt) for attempt in range(TRANSPORT_ATTEMPTS - 1)]
+    assert waits[:6] == [2, 4, 8, 16, 32, 60]
+    assert max(waits) == 60
+    assert 25 * 60 <= sum(waits) <= 35 * 60
 
 
 class CutOff:

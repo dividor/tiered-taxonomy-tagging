@@ -28,7 +28,10 @@ from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 
 from tiered_taxonomy.models import ModelSpec, make_chat_model
 
-TRANSPORT_ATTEMPTS = 9
+# A provider can refuse with "too many requests" for many minutes at a time, so a call waits up to about half
+# an hour in all before giving up: pauses double from 2 seconds and stop growing at one minute.
+TRANSPORT_ATTEMPTS = 35
+MAX_TRANSPORT_WAIT = 60
 # Failures worth retrying. A refused key or exhausted credit is none of these, so it stops the run at once.
 TRANSPORT_ERRORS = (
     ConnectionError,
@@ -48,6 +51,12 @@ CREATE TABLE IF NOT EXISTS replies (
     input_tokens INTEGER, output_tokens INTEGER, seconds REAL
 )
 """
+
+
+def transport_wait(attempt: int) -> float:
+    """Return the seconds to wait after failed attempt `attempt`, counted from 0: doubling from 2 seconds, at
+    most a minute."""
+    return float(min(2 ** (attempt + 1), MAX_TRANSPORT_WAIT))
 
 
 @dataclass(frozen=True)
@@ -213,7 +222,7 @@ class Client:
             except TRANSPORT_ERRORS:
                 if attempt == TRANSPORT_ATTEMPTS - 1:
                     raise
-                self._sleep(2 ** (attempt + 1))
+                self._sleep(transport_wait(attempt))
         raise RuntimeError("transport retries ran out")
 
     def ask(self, system: str, user: str) -> Reply:
